@@ -1,32 +1,17 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-#  📚 litreviewR
+#  📚 litreviewR 📚
 
-O \*\*\`litreviewR\`\*\* é um pacote R que automatiza o processo de
-\*\*revisão de literatura científica\*\* e prepara suas referências para
+O **`litreviewR`** é um pacote R que automatiza o processo de
+**revisão de literatura científica** e prepara suas referências para
 análises com modelos de linguagem (LLMs/SLMs). Ele ajuda pesquisadores a
-transformar arquivos \`.bib\` em pipelines reprodutíveis de coleta,
-download e análise textual de artigos acadêmicos.
+transformar arquivos `.bib` em pipelines reprodutíveis de coleta,
+download e análise textual de artigos acadêmicos!
 
-------------------------------------------------------------------------
+---
 
-## 🚀 O que o pacote faz
-
-\- Lê arquivos \`.bib\` e estrutura as referências (\`gera_referencia\`)
-
-\- Busca o DOI automaticamente quando ausente
-(\`descobre_doi_por_titulo\`)
-
-\- Baixa artigos nacionais (SciELO, USP, ANPOCS) via
-\`baixa_pdf_aberto()\`
-
-\- Baixa artigos internacionais via Sci-Hub com \`baixa_pdf_scihub()\`
-
-\- Usa roteamento inteligente com \`baixa_pdf_auto()\` para decidir o
-método ideal
-
-## 🚀 Instalação
+## 🚀 Instalação 🚀
 
 Você pode instalar a versão de desenvolvimento diretamente do GitHub
 com:
@@ -39,14 +24,34 @@ install.packages("devtools")
 devtools::install_github("baruquerodrigues/litreviewR")
 ```
 
-## 🧠 Pipeline automático de download
+---
 
-A função `baixa_pdf_auto()` identifica automaticamente a origem do
-artigo:
+## 🤔 O que o pacote faz? 🤔
+
+- `gera_referencia()`: Lê arquivos `.bib` e estrutura as referências ☑️
+
+- `descobre_doi_por_titulo()`: Busca o DOI automaticamente quando ausente ☑️
+
+- `baixa_pdf_aberto()`: Baixa artigos nacionais (**SciELO, USP, ANPOCS**) ☑️
+
+- `baixa_pdf_scihub()`: Baixa artigos internacionais via **Sci-Hub** ☑️
+
+- [`baixa_pdf_auto()`](#pipeline-automátic-de-download): Usa roteamento inteligente para decidir o
+método ideal ☑️
+
+### 🧠 Pipeline inteligente de download 🧠
+
+A função `baixa_pdf_auto()` identifica *automaticamente* a origem do
+artigo!
 
 - **Artigos nacionais**: detectados por domínio ou `publisher` no
-  CrossRef → `baixa_pdf_aberto()`
-- **Artigos internacionais** ou com paywall → `baixa_pdf_scihub()`
+  *CrossRef* ➡ `baixa_pdf_aberto()`
+
+- **Artigos internacionais** ou com *paywall* ➡ `baixa_pdf_scihub()`
+
+### Exemplos das Funções principais
+
+- Gerando referências e baixando PDFs
 
 ``` r
 library(litreviewR)
@@ -58,7 +63,7 @@ referencias <- gera_referencia("minhas_referencias.bib")
 baixa_pdf_auto(referencias, diretorio = "pdfs")
 ```
 
-✨ Funções principais
+- Gerando referências e baixando conforme origem do artigo
 
 ``` r
 # Extrai as referências do .bib
@@ -74,7 +79,9 @@ baixa_pdf_scihub(refs)
 baixa_pdf_auto(refs)
 ```
 
-## 🔧 Em desenvolvimento
+---
+
+## 🔧 Em desenvolvimento 🔧
 
 - Integração com modelos LLMs e SLMs (GPT, Claude, BERT etc)
 
@@ -88,14 +95,20 @@ baixa_pdf_auto(refs)
 
 - Mapeamento de co-citações e redes semânticas
 
+---
+
 ## 👤 Autor
 
-Desenvolvido por [Baruque
-Rodrigues](https://github.com/baruqrodrigues)  
-Coordenador de Operacoes e cientista de dados interessado automacoes,
-money and politics, estatistica forense e NLP.
+Desenvolvido por [Baruque Rodrigues](https://github.com/baruqrodrigues).
+
+Coordenador de Operacoes e cientista de dados interessado automações,
+money and politics, estatística forense e NLP.
+
+---
 
 ## 📜 Licença
 
 MIT © 2025 — Você pode usar, modificar e redistribuir livremente com os
 devidos créditos.
+
+---

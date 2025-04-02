@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# \# 📚 litreviewR
+#  📚 litreviewR
 
 O \*\*\`litreviewR\`\*\* é um pacote R que automatiza o processo de
 \*\*revisão de literatura científica\*\* e prepara suas referências para
@@ -11,7 +11,7 @@ download e análise textual de artigos acadêmicos.
 
 ------------------------------------------------------------------------
 
-\## 🚀 O que o pacote faz
+## 🚀 O que o pacote faz
 
 \- Lê arquivos \`.bib\` e estrutura as referências (\`gera_referencia\`)
 
@@ -36,7 +36,7 @@ com:
 install.packages("devtools")
 
 # Instale o litreviewR
-devtools::install_github("baruqrodrigues/litreviewR")
+devtools::install_github("baruquerodrigues/litreviewR")
 ```
 
 ## 🧠 Pipeline automático de download

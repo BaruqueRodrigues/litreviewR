@@ -1,0 +1,101 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# \# 📚 litreviewR
+
+O \*\*\`litreviewR\`\*\* é um pacote R que automatiza o processo de
+\*\*revisão de literatura científica\*\* e prepara suas referências para
+análises com modelos de linguagem (LLMs/SLMs). Ele ajuda pesquisadores a
+transformar arquivos \`.bib\` em pipelines reprodutíveis de coleta,
+download e análise textual de artigos acadêmicos.
+
+------------------------------------------------------------------------
+
+\## 🚀 O que o pacote faz
+
+\- Lê arquivos \`.bib\` e estrutura as referências (\`gera_referencia\`)
+
+\- Busca o DOI automaticamente quando ausente
+(\`descobre_doi_por_titulo\`)
+
+\- Baixa artigos nacionais (SciELO, USP, ANPOCS) via
+\`baixa_pdf_aberto()\`
+
+\- Baixa artigos internacionais via Sci-Hub com \`baixa_pdf_scihub()\`
+
+\- Usa roteamento inteligente com \`baixa_pdf_auto()\` para decidir o
+método ideal
+
+## 🚀 Instalação
+
+Você pode instalar a versão de desenvolvimento diretamente do GitHub
+com:
+
+``` r
+# Instale o devtools, se ainda não tiver
+install.packages("devtools")
+
+# Instale o litreviewR
+devtools::install_github("baruqrodrigues/litreviewR")
+```
+
+## 🧠 Pipeline automático de download
+
+A função `baixa_pdf_auto()` identifica automaticamente a origem do
+artigo:
+
+- **Artigos nacionais**: detectados por domínio ou `publisher` no
+  CrossRef → `baixa_pdf_aberto()`
+- **Artigos internacionais** ou com paywall → `baixa_pdf_scihub()`
+
+``` r
+library(litreviewR)
+
+# Lê o .bib
+referencias <- gera_referencia("minhas_referencias.bib")
+
+# Baixa os PDFs automaticamente
+baixa_pdf_auto(referencias, diretorio = "pdfs")
+```
+
+✨ Funções principais
+
+``` r
+# Extrai as referências do .bib
+refs <- gera_referencia("referencias.bib")
+
+# Baixa um artigo nacional (SciELO)
+baixa_pdf_aberto(refs)
+
+# Baixa um artigo via Sci-Hub
+baixa_pdf_scihub(refs)
+
+# Usa o pipeline automático inteligente
+baixa_pdf_auto(refs)
+```
+
+## 🔧 Em desenvolvimento
+
+- Integração com modelos LLMs e SLMs (GPT, Claude, BERT etc)
+
+  - Classificação temática automática
+
+  - Sumarização de artigos
+
+  - Extração de tópicos
+
+- Visualizações com Shiny ou Quarto
+
+- Mapeamento de co-citações e redes semânticas
+
+## 👤 Autor
+
+Desenvolvido por [Baruque
+Rodrigues](https://github.com/baruqrodrigues)  
+Coordenador de Operacoes e cientista de dados interessado automacoes,
+money and politics, estatistica forense e NLP.
+
+## 📜 Licença
+
+MIT © 2025 — Você pode usar, modificar e redistribuir livremente com os
+devidos créditos.

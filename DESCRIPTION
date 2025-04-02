@@ -1,0 +1,23 @@
+Package: litreviewR
+Type: Package
+Title: Automação de Revisões de Literatura e Análises Textuais com R
+Version: 0.1.0
+Authors@R: c(person("Baruque", "Rodrigues", email = "quemuel.baruque@ufpe.br", role = c("aut", "cre")))
+Description: Um pacote para cientistas e pesquisadores estruturarem revisões de literatura de forma automatizada.
+    Lê arquivos BibTeX (.bib), extrai e organiza referências, baixa artigos automaticamente via Sci-Hub
+    e prepara os dados para análises textuais com modelos de linguagem (LLMs/SLMs).
+    Ideal para workflows de pesquisa reproducíveis e automatizados.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.2
+Imports: 
+    cli,
+    fs,
+    httr,
+    magrittr,
+    purrr,
+    RefManageR,
+    rvest,
+    stringr,
+    xml2

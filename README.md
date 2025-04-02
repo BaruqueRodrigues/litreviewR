@@ -1,6 +1,21 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+<details>
+  <summary>📚 Sumário 📚</summary>
+
+  - [Instalação](#-instalação-)  
+  - [O que o pacote faz?](#-o-que-o-pacote-faz-)  
+  - [Pipeline inteligente de download](#-pipeline-inteligente-de-download-)  
+  - [Exemplos das Funções principais](#exemplos-das-funções-principais)  
+  - [Em desenvolvimento](#-em-desenvolvimento-)  
+  - [Autor](#-autor)  
+  - [Licença](#-licença)  
+
+</details>
+
+---
+
 #  📚 litreviewR 📚
 
 O **`litreviewR`** é um pacote R que automatiza o processo de
@@ -36,7 +51,7 @@ devtools::install_github("baruquerodrigues/litreviewR")
 
 - `baixa_pdf_scihub()`: Baixa artigos internacionais via **Sci-Hub** ☑️
 
-- [`baixa_pdf_auto()`](#pipeline-automátic-de-download): Usa roteamento inteligente para decidir o
+- `baixa_pdf_auto()`: Usa roteamento inteligente para decidir o
 método ideal ☑️
 
 ### 🧠 Pipeline inteligente de download 🧠

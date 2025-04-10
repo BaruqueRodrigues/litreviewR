@@ -13,11 +13,21 @@ LazyData: true
 RoxygenNote: 7.3.2
 Imports: 
     cli,
+    dplyr,
     fs,
+    glue,
     httr,
     magrittr,
+    pdftools,
     purrr,
+    readr,
     RefManageR,
     rvest,
+    slam,
+    stm,
     stringr,
+    tibble,
+    tidytext,
+    tm,
+    topicmodels,
     xml2

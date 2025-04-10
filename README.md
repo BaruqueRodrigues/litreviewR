@@ -201,11 +201,6 @@ modelo_lda <- modela_topicos(dtm, k = 10, method = "lda")
 modelo_nmf <- modela_topicos(dtm, k = 10, method = "nmf")
 ```
 
-``` r
-# metadados deve conter colunas como 'ano_publicacao'
-modelo_stm <- modela_topicos(dtm, k = 10, method = "stm", metadados = dados_artigos)
-```
-
 🤖 modela_topicos(method = “stm”) + metadados
 
 Para quê serve? Permite usar variáveis como ano, autor, tipo de
@@ -213,6 +208,11 @@ periódico como covariáveis no modelo, com o método STM.
 
 Caso prático: “Quero ver se os temas mudam com o tempo, comparando os
 tópicos de artigos publicados antes e depois de 2010.
+
+``` r
+# metadados deve conter colunas como 'ano_publicacao'
+modelo_stm <- modela_topicos(dtm, k = 10, method = "stm", metadados = dados_artigos)
+```
 
 ## 🔧 Em desenvolvimento
 

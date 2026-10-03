@@ -2,16 +2,31 @@
 % Please edit documentation in R/descobre_doi_por_titulo.R
 \name{descobre_doi_por_titulo}
 \alias{descobre_doi_por_titulo}
-\title{Encontra o DOI via titulo do artigo}
+\title{Encontrar DOI por título com avaliação de correspondência}
 \usage{
-descobre_doi_por_titulo(titulo)
+descobre_doi_por_titulo(
+  titulo,
+  autores = NULL,
+  ano = NULL,
+  detalhes = FALSE,
+  ...
+)
 }
 \arguments{
-\item{titulo}{titulo do artigo}
+\item{titulo}{Título da referência.}
+
+\item{autores}{Autores opcionais.}
+
+\item{ano}{Ano opcional.}
+
+\item{detalhes}{Retornar diagnóstico completo.}
+
+\item{...}{Argumentos encaminhados a `identifica_doi_referencia()`.}
 }
 \value{
-DOI do artigo
+DOI confirmado, `NULL` ou resultado detalhado.
 }
 \description{
-Encontra o DOI via titulo do artigo
+A forma padrão mantém compatibilidade retornando apenas DOI confirmado ou
+`NULL`. Use `detalhes = TRUE` para receber pontuação, candidatos e status.
 }

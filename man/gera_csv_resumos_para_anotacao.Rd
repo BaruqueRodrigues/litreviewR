@@ -2,22 +2,30 @@
 % Please edit documentation in R/gera_csv_resumos_para_anotacao.R
 \name{gera_csv_resumos_para_anotacao}
 \alias{gera_csv_resumos_para_anotacao}
-\title{Gera um CSV com resumos extraídos de PDFs para anotação manual}
+\title{Exportar resumos encontrados em PDFs para anotação manual}
 \usage{
 gera_csv_resumos_para_anotacao(
   pasta_pdfs,
-  caminho_saida = "pdfs/resumos_para_anotacao.csv"
+  caminho_saida = "resumos_para_anotacao.csv",
+  ocr = FALSE,
+  idioma_ocr = "por+eng"
 )
 }
 \arguments{
-\item{pasta_pdfs}{Caminho para a pasta com os arquivos PDF.}
+\item{pasta_pdfs}{Pasta com PDFs.}
 
-\item{caminho_saida}{Caminho para salvar o arquivo CSV. Default: "resumos_para_anotacao.csv"}
+\item{caminho_saida}{Arquivo CSV de saída.}
+
+\item{ocr}{Tentar OCR quando não houver camada textual. Requer suporte de
+OCR disponível para `pdftools::pdf_ocr_text()`.}
+
+\item{idioma_ocr}{Idioma passado ao OCR, caso ativado.}
 }
 \value{
-Salva o CSV no diretório indicado.
+Tibble gravado em CSV e retornado invisivelmente.
 }
 \description{
-Extrai os primeiros 1000 caracteres de cada PDF, detecta o idioma, e exporta um arquivo
-CSV com colunas de anotação manual para área temática e corrente teórica.
+Procura marcadores `Resumo` e `Abstract`, interrompe antes de palavras-chave
+ou da introdução e identifica recortes incertos. Não substitui resumo
+ausente por cabeçalho ou início arbitrário do artigo.
 }

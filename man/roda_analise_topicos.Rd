@@ -2,37 +2,57 @@
 % Please edit documentation in R/roda_analise_topicos.R
 \name{roda_analise_topicos}
 \alias{roda_analise_topicos}
-\title{Roda o pipeline completo de análise de tópicos}
+\title{Executa o pipeline de análise de tópicos}
 \usage{
 roda_analise_topicos(
-  pasta_pdfs,
+  pasta_pdfs = NULL,
+  textos = NULL,
+  doc_ids = NULL,
+  dtm = NULL,
   k = 10,
   method = c("lda", "stm", "nmf"),
   idioma = "portuguese",
   modo = c("agrupado", "detalhado"),
   metadados = NULL,
-  min_freq = 2
+  formula_prevalence = NULL,
+  formula_content = NULL,
+  min_freq = 2,
+  seed = 1234
 )
 }
 \arguments{
-\item{pasta_pdfs}{Caminho da pasta com arquivos PDF.}
+\item{pasta_pdfs}{Caminho da pasta com arquivos PDF (opcional se `textos` ou `dtm` for informado).}
 
-\item{k}{Número de tópicos.}
+\item{textos}{Vetor de textos alternativo (opcional).}
 
-\item{method}{Algoritmo: "lda", "stm", "nmf".}
+\item{doc_ids}{IDs alinhados com `textos`, quando estes não estão nomeados.}
+
+\item{dtm}{DocumentTermMatrix pré-computada (opcional).}
+
+\item{k}{Número de tópicos. Default = 10.}
+
+\item{method}{Algoritmo: `"lda"` ou `"stm"`. `"nmf"` retorna mensagem de indisponibilidade.}
 
 \item{idioma}{Idioma para stopwords (ex: "portuguese", "english").}
 
 \item{modo}{Modo de retorno dos termos: "agrupado" ou "detalhado".}
 
-\item{metadados}{(opcional) Data frame com metadados (necessário para STM).}
+\item{metadados}{Data frame de metadados para STM.}
 
-\item{min_freq}{Filtro de frequência mínima dos termos. Default: 2.}
+\item{formula_prevalence}{Fórmula de covariáveis de prevalência para STM.}
+
+\item{formula_content}{Fórmula de covariáveis de conteúdo para STM.}
+
+\item{min_freq}{Filtro de frequência mínima dos termos. Default = 2.}
+
+\item{seed}{Semente para reprodutibilidade. Default = 1234.}
 }
 \value{
-Uma lista com: `topicos`, `modelo`, `dtm` e (opcional) `metadados`.
+Uma lista com tópicos, modelo, DTM, exclusões, metadados e matriz
+  `associacao_documento_topico` quando disponível.
 }
 \description{
-Esta função automatiza a leitura de PDFs, criação da DTM,
-modelagem de tópicos (LDA/STM/NMF), e retorno dos tópicos com seus termos.
+Esta função automatiza a leitura de PDFs ou textos, criação da DTM com
+rastreamento de exclusões, ajuste de LDA/STM e extração de tópicos. NMF está
+suspenso até que um backend mantido seja validado.
 }

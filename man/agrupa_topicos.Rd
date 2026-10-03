@@ -2,13 +2,14 @@
 % Please edit documentation in R/agrupa_topicos.R
 \name{agrupa_topicos}
 \alias{agrupa_topicos}
-\title{Agrupa tópicos por área temática ou corrente teórica}
+\title{Agrupa tópicos por área temática ou agrupamento léxico}
 \usage{
 agrupa_topicos(
   topicos,
   metodo = c("manual", "cluster"),
   arquivo_csv = NULL,
   n_clusters = 4,
+  seed = 1234,
   return_embeddings = FALSE
 )
 }
@@ -17,16 +18,25 @@ agrupa_topicos(
 
 \item{metodo}{Modo de agrupamento: `"manual"` ou `"cluster"`.}
 
-\item{arquivo_csv}{Caminho do CSV anotado manualmente (obrigatório se metodo = "manual").}
+\item{arquivo_csv}{Caminho do CSV anotado manualmente com coluna `topico` (obrigatório se metodo = "manual").}
 
-\item{n_clusters}{Número de grupos para clustering automático.}
+\item{n_clusters}{Número de grupos para clustering automático. Default = 4.}
 
-\item{return_embeddings}{Se TRUE, retorna também a matriz de embeddings.}
+\item{seed}{Semente para inicialização do k-means para reprodutibilidade. Default = 1234.}
+
+\item{return_embeddings}{Se TRUE, retorna também a matriz de atributos TF-IDF
+(não são embeddings semânticos).}
 }
 \value{
-Um data.frame com colunas `topico`, `texto`, `grupo` e, opcionalmente, embeddings.
+Um data.frame com colunas `topico`, `texto`, `grupo` e, opcionalmente, a matriz de atributos.
 }
 \description{
 Este módulo permite dois métodos de agrupamento dos tópicos extraídos de uma modelagem:
-(1) Manual, a partir de anotação externa em CSV; ou (2) Automático, via embeddings e clustering.
+(1) Manual, a partir de anotação externa em arquivo tabular (CSV); ou
+(2) Automático, via representação TF-IDF normalizada e k-means clustering.
+}
+\details{
+Atenção metodológica: o agrupamento estatístico via TF-IDF e k-means baseia-se em
+coocorrência léxica de termos e não deve ser confundido com representações semânticas
+densas (embeddings neurais pré-treinados).
 }

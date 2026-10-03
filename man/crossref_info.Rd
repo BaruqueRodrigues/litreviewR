@@ -4,10 +4,14 @@
 \alias{crossref_info}
 \title{Consulta metadados de um artigo via CrossRef}
 \usage{
-crossref_info(doi)
+crossref_info(doi, timeout = 20, .get = httr::GET)
 }
 \arguments{
 \item{doi}{String com o DOI do artigo.}
+
+\item{timeout}{Limite HTTP em segundos.}
+
+\item{.get}{Transporte HTTP substituível para testes.}
 }
 \value{
 Uma lista com os campos \code{publisher}, \code{container}, \code{type} e \code{url}.

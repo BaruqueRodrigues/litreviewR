@@ -3,20 +3,24 @@ Type: Package
 Title: Automação de Revisões de Literatura e Análises Textuais com R
 Version: 0.1.0
 Authors@R: c(person("Baruque", "Rodrigues", email = "quemuel.baruque@ufpe.br", role = c("aut", "cre")))
-Description: Um pacote para cientistas e pesquisadores estruturarem revisões de literatura de forma automatizada.
-    Lê arquivos BibTeX (.bib), extrai e organiza referências, baixa artigos automaticamente via Sci-Hub
-    e prepara os dados para análises textuais com modelos de linguagem (LLMs/SLMs).
-    Ideal para workflows de pesquisa reproducíveis e automatizados.
+Description: Ferramentas para organizar referências, preparar corpora textuais,
+    explorar tópicos e apoiar extração e classificação estruturadas em revisões
+    de literatura. Oferece instrumentos configuráveis, adaptadores opcionais
+    para APIs de modelos de linguagem e validação de contratos e evidências,
+    mantendo revisão e interpretação científica sob responsabilidade da equipe.
+URL: https://github.com/BaruqueRodrigues/litreviewR
+BugReports: https://github.com/BaruqueRodrigues/litreviewR/issues
 License: MIT + file LICENSE
 Encoding: UTF-8
+Depends: R (>= 4.1.0)
 LazyData: true
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
     cli,
     dplyr,
     fs,
-    glue,
     httr,
+    jsonlite,
     magrittr,
     pdftools,
     purrr,
@@ -31,3 +35,12 @@ Imports:
     tm,
     topicmodels,
     xml2
+Suggests:
+    cld2,
+    knitr,
+    rmarkdown,
+    shiny,
+    text2vec,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr

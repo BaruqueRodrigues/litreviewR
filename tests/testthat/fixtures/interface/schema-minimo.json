@@ -1,0 +1,31 @@
+{
+  "schema_id": "fixture-interface",
+  "format_version": "1.0.0",
+  "revision": 1,
+  "title": "Instrumento de teste",
+  "area": "Sociologia",
+  "instruction_language": "pt-BR",
+  "dimensions": [
+    {
+      "id": "topic",
+      "label": "Tema",
+      "definition": "Tema abordado",
+      "active": true,
+      "type": "multiple_categories",
+      "scope": "article",
+      "operations": ["classify"],
+      "instruction": "Escolha todos os temas sustentados pelo texto.",
+      "search_terms": [],
+      "include_examples": [],
+      "exclude_examples": [],
+      "evidence_required": true,
+      "categories": [
+        {"id": "institutions", "label": "Instituições", "description": "Instituições políticas"}
+      ],
+      "scoring_rubric": [],
+      "applicability": {"all": [], "any": []},
+      "inference_policy": "explicit_only",
+      "review_rule": {"type": "if_ambiguous", "threshold": null, "experimental": false}
+    }
+  ]
+}

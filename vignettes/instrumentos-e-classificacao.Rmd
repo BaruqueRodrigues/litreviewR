@@ -1,0 +1,112 @@
+---
+title: "Instrumentos configuráveis e classificação temática"
+author: "litreviewR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Instrumentos configuráveis e classificação temática}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(litreviewR)
+```
+
+Um instrumento permite que a equipe defina dimensões pertinentes à pergunta,
+à área e à unidade de análise. Isso evita impor uma taxonomia universal e cria
+uma estrutura serializável que pessoas e agentes podem ler e validar.
+
+## Criar e editar um esquema
+
+`schema_padrao()` cria uma estrutura inicial. Edite título, área e dimensões ou
+abra o editor local com `configura_revisao()`. O editor não chama modelos;
+`launch = FALSE` permite construir o objeto sem abrir uma janela interativa.
+
+```{r}
+esquema <- schema_padrao()
+checar <- schema_validar(esquema)
+checar$valid
+```
+
+O esquema pode ser serializado com `schema_para_json()` ou `schema_escrever()`;
+`schema_de_json()` e `schema_ler()` reconstroem o objeto. Valide depois de
+editar e antes de compartilhar com um pipeline.
+
+```{r}
+json <- schema_para_json(esquema)
+esquema_copia <- schema_de_json(json)
+schema_validar(esquema_copia)$valid
+```
+
+```{r, eval=FALSE}
+esquema <- configura_revisao(schema = esquema, launch = TRUE)
+schema_escrever(esquema, "instrumento.json")
+esquema_reaberto <- schema_ler("instrumento.json")
+```
+
+## Validar entradas e resultados
+
+`contrato_validar()` verifica estruturas conhecidas do pacote, como `schema`,
+`response`, `evidence` e `corpus`. Use `error = FALSE` para obter diagnósticos
+sem interromper o fluxo.
+
+```{r}
+contrato_validar(esquema, tipo = "schema")
+```
+
+Esses contratos tornam saídas mais previsíveis para scripts e agentes, mas não
+provam a validade substantiva dos dados nem a qualidade da codificação.
+
+## Classificar categorias com JEV
+
+`classifica_dimensoes()` envia ao JEV as dimensões ativas de categoria única ou
+múltipla compatíveis com o `scope` da unidade. Como a classificação é
+inferencial, configure explicitamente `inference_policy =
+"allow_inference"`. Em categorias múltiplas, o retorno pode conter uma linha
+por categoria. Use limiar de confiança e revisão humana; a função não produz
+evidência textual independente.
+
+```{r, eval=FALSE}
+esquema$dimensions[[1]]$type <- "single_category"
+esquema$dimensions[[1]]$operations <- list("classify")
+esquema$dimensions[[1]]$inference_policy <- "allow_inference"
+esquema$dimensions[[1]]$categories <- list(
+  list(id = "spending", label = "Gastos", description = "Composição e volume de despesas de campanha."),
+  list(id = "electoral_effect", label = "Efeito eleitoral", description = "Relação entre despesa e resultado eleitoral.")
+)
+esquema$dimensions[[1]]$scope <- "article"
+
+rotulos <- classifica_dimensoes(
+  conteudo = "Resumo ou texto selecionado do artigo",
+  schema = esquema,
+  unidade = list(scope = "article", unit_id = "artigo_001"),
+  confidence_threshold = 0.70
+)
+```
+
+`jev_avalia()` é o adaptador de baixo nível para perguntas Choice no formato
+JEV. Em geral, use `classifica_dimensoes()` para gerar perguntas a partir do
+instrumento e prefira `jev_avalia()` quando seu pipeline já constrói perguntas
+compatíveis com a API. Ambos requerem credencial TypeSafe configurada no
+ambiente e acesso de rede.
+
+```{r, eval=FALSE}
+perguntas <- list(q1 = list(
+  type = "choice",
+  instructions = "Qual aspecto é central no texto?",
+  criteria = list(gasto = "Mensuração ou composição de despesas", efeito = "Efeito nos votos")
+))
+resposta <- jev_avalia(
+  state = "Resumo do artigo",
+  questions = perguntas
+)
+```
+
+## Funções cobertas
+
+- `schema_padrao()`, `schema_validar()`, `schema_para_json()`,
+  `schema_de_json()`, `schema_ler()`, `schema_escrever()` e
+  `configura_revisao()`.
+- `contrato_validar()`.
+- `classifica_dimensoes()` e `jev_avalia()`.

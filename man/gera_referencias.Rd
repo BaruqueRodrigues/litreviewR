@@ -2,22 +2,26 @@
 % Please edit documentation in R/gera_referencias.R
 \name{gera_referencias}
 \alias{gera_referencias}
-\title{Lê um arquivo BibTeX e extrai referências em formato compatível com download automático}
+\title{Ler referências de um arquivo BibTeX preservando proveniência}
 \usage{
 gera_referencias(caminho_bib)
 }
 \arguments{
-\item{caminho_bib}{Caminho para o arquivo BibTeX (.bib) contendo as referências.}
+\item{caminho_bib}{Caminho para arquivo BibTeX.}
 }
 \value{
-Uma lista de listas, onde cada elemento possui os campos `title`, `doi` (opcional) e `id`, prontos para uso na função `baixa_pdf_com_busca()`.
+Lista de registros de artigo com `article_id` (também mantido como
+  `id` para compatibilidade), `id_source`, `bib_key` e campos
+  bibliográficos originais que estiverem disponíveis.
 }
 \description{
-Esta função lê um arquivo `.bib` usando `RefManageR::ReadBib()` e extrai os campos `title`, `doi` e gera um `id` baseado no título.
+Retorna registros com metadados bibliográficos e ID estável. A chave
+BibTeX é a identidade preferida; DOI normalizado e um hash de título,
+autores e ano são alternativas quando a chave não está disponível.
 }
 \examples{
 \dontrun{
 refs <- gera_referencias("referencias.bib")
-purrr::walk(refs, ~baixa_pdf_scihub(.x, diretorio = "pdfs"))
+baixa_pdf_auto(refs, diretorio = "pdfs")
 }
 }

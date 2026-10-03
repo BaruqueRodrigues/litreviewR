@@ -1,0 +1,13 @@
+{
+  "passage_id": "passage-001",
+  "document_id": "doc-001",
+  "page_pdf": 1,
+  "page_printed": "1",
+  "section": "Introdução",
+  "text": "Este estudo analisa instituições sociais.",
+  "text_normalized": "Este estudo analisa instituições sociais.",
+  "location": {
+    "start": 1,
+    "end": 41
+  }
+}

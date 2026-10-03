@@ -1,0 +1,23 @@
+{
+  "run_id": "run-001",
+  "schema_id": "litreview-social-sciences",
+  "revision": 1,
+  "dimension_id": "research_question",
+  "unit_type": "article",
+  "unit_id": "art-001",
+  "value": "Como instituições moldam resultados?",
+  "status": "extraido",
+  "value_origin": "explicit",
+  "backend": "fixture",
+  "model": "fixture-v1",
+  "instruction_version": "1",
+  "evidence_ids": [
+    "evidence-001"
+  ],
+  "coverage": {
+    "status": "full_text"
+  },
+  "human_review": {
+    "status": "pending"
+  }
+}

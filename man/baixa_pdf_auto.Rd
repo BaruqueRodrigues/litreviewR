@@ -2,22 +2,31 @@
 % Please edit documentation in R/baixa_pdf_auto.R
 \name{baixa_pdf_auto}
 \alias{baixa_pdf_auto}
-\title{Função mestre que decide entre baixar PDF via SciELO ou Sci-Hub}
+\title{Baixar referências por fontes configuráveis e validar cada PDF}
 \usage{
-baixa_pdf_auto(referencias, diretorio = "pdfs", delay = 2)
+baixa_pdf_auto(
+  referencias,
+  diretorio = "pdfs",
+  delay = 2,
+  fontes = getOption("litreviewR.download_sources", c("local", "url", "aberto",
+    "scihub"))
+)
 }
 \arguments{
-\item{referencias}{Uma lista de listas, onde cada entrada deve conter ao menos `title` e opcionalmente `doi` e `id`.}
+\item{referencias}{Lista de referências ou uma referência individual.}
 
-\item{diretorio}{Diretório onde os PDFs serão salvos.}
+\item{diretorio}{Diretório de destino dos PDFs.}
 
-\item{delay}{Delay entre as requisições, em segundos. Default: `2`.}
+\item{delay}{Pausa em segundos entre referências.}
+
+\item{fontes}{Ordem das fontes: `local`, `url`, `aberto`, `scihub`.}
 }
 \value{
-Retorna `invisible(NULL)`. Os PDFs são salvos no diretório indicado.
+Lista de resultados por referência, contendo ID, status, caminho,
+  fonte, URL, motivo de falha e vetor `attempts` com o resultado de cada fonte tentada.
 }
 \description{
-Recebe uma lista de referências (com título e DOI) e decide automaticamente se deve usar
-\code{baixa_pdf_aberto()} (para artigos nacionais) ou \code{baixa_pdf_scihub()} (para internacionais).
-Ao final, exibe um resumo com o status de cada tentativa.
+As fontes são tentadas na ordem de `fontes`. Os valores aceitos são
+`local`, `url`, `aberto` e `scihub`; Sci-Hub só é consultado depois das fontes
+locais e abertas quando essa ordem padrão é usada.
 }

@@ -1,0 +1,18 @@
+{
+  "model": "jev-1.13.0",
+  "answers": {
+    "topic": {
+      "type": "choice",
+      "choice": "institutions",
+      "confidence": 0.8,
+      "probabilities": {
+        "institutions": 0.9,
+        "behavior": 0.1
+      }
+    }
+  },
+  "usage": {
+    "input_tokens": 120,
+    "output_tokens": 18
+  }
+}

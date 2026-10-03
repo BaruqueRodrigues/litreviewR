@@ -1,241 +1,201 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md is generated from README.Rmd. Edit this source. -->
 
-# 📚 litreviewR
+# litreviewR
 
-O **`litreviewR`** é um pacote R que automatiza o processo de **revisão
-de literatura científica** e prepara suas referências e textos para
-análises estruturadas com modelos de linguagem (LLMs/SLMs) e análise de
-tópicos. Ideal para pesquisadores e gestores públicos que precisam
-organizar, baixar e interpretar grandes volumes de literatura com
-**baixo esforço manual**.
+**Organize a revisão; mantenha o pesquisador no controle.** `litreviewR`
+é um pacote R para organizar referências, preparar corpora textuais e
+apoiar extração e classificação estruturadas em revisões de literatura.
+Ele combina ferramentas tradicionais de análise de texto com
+instrumentos configuráveis e adaptadores para modelos de linguagem e
+classificação JEV.
 
-------------------------------------------------------------------------
+O pacote foi pensado para cientistas sociais e políticos que precisam
+tornar mais sistemática a triagem, a codificação e a síntese de um
+corpus. Também oferece interfaces legíveis por scripts e agentes:
+esquemas JSON, contratos explícitos, resultados estruturados e validação
+de citações permitem encaixá-lo em fluxos automatizados sem delegar
+decisões científicas ao modelo.
 
-## 🚀 O que o pacote faz
+> **Estado do projeto:** versão de desenvolvimento `0.1.0`. Resultados
+> de LLM e JEV são candidatos a codificação e precisam de revisão
+> humana. O pacote não substitui protocolo de revisão sistemática nem
+> valida conclusões substantivas por conta própria.
 
-- Lê arquivos `.bib` e estrutura as referências (`gera_referencia`)
+## O que você pode fazer
 
-- Busca o DOI automaticamente quando ausente (`descobre_doi_por_titulo`)
+- Ler referências BibTeX, normalizar e localizar DOIs, consultar
+  metadados Crossref e registrar possíveis duplicatas.
+- Preparar PDFs e textos identificados, extrair resumos para triagem e
+  criar uma matriz documento-termo com registro de exclusões.
+- Explorar corpus com LDA ou STM, inspecionar termos por tópico e
+  agrupar tópicos por anotação humana ou por similaridade lexical
+  TF-IDF.
+- Definir suas próprias dimensões de revisão, categorias, escopos e
+  regras em um esquema JSON editável, sem assumir uma taxonomia
+  universal.
+- Usar JEV para classificar dimensões categóricas e modelos compatíveis
+  com Chat Completions para extrair campos estruturados.
+- Validar contratos e verificar se citações ocorrem literalmente nas
+  passagens fornecidas; registrar uso informado pelas APIs.
 
-- Baixa artigos **nacionais** (SciELO, ANPOCS etc) via
-  `baixa_pdf_aberto()`
+## Por que usar em pesquisas sociais e políticas
 
-- Baixa artigos **internacionais** via Sci-Hub com `baixa_pdf_scihub()`
+Em ciência política, o pesquisador pode estruturar um corpus sobre
+gastos de campanha, por exemplo, e configurar campos para país, eleição,
+cargo, unidade de análise, definição de despesa, categorias de gasto,
+método, resultados e limitações. Em outras áreas das ciências sociais,
+as dimensões podem ser substituídas pelas variáveis e conceitos
+pertinentes à pergunta de pesquisa.
 
-- Usa **roteamento inteligente** com `baixa_pdf_auto()` para escolher o
-  melhor método de download
+Isso ajuda a aplicar o mesmo formulário a muitos artigos, identificar
+campos faltantes, separar texto-fonte de inferências, manter IDs
+estáveis e exportar resultados que possam ser conferidos. LDA/STM ajudam
+a explorar vocabulário e padrões do corpus; JEV ajuda a aplicar
+categorias definidas pelo pesquisador; um LLM pode preencher campos ou
+sugerir trechos para verificação. Nenhum desses passos decide, por si
+só, o que conta como evidência ou como interpretar um achado.
 
-- Extrai **resumos** dos PDFs para avaliação manual
-  (`gera_csv_resumos_para_anotacao`)
+## Uso em fluxos com agentes
 
-- Cria **agrupamentos temáticos** dos tópicos via anotação ou clustering
-  (`agrupa_topicos`)
+`litreviewR` é uma biblioteca que agentes podem chamar por meio de R ou
+de um wrapper apropriado. O pacote não instala nem hospeda agentes. Um
+agente pode, por exemplo, receber um esquema JSON definido pela equipe,
+processar um artigo por vez, chamar `extrai_dimensoes()` ou
+`classifica_dimensoes()`, validar os objetos com `contrato_validar()` e
+verificar trechos com `valida_evidencia_trecho()`. O pesquisador pode
+revisar casos ambíguos, alterar o instrumento e controlar quais
+resultados seguem para a síntese.
 
-- Gera **modelos de tópicos** com LDA, STM ou NMF (`modela_topicos`)
+A divisão entre instrumento, entrada, chamada e resposta estruturada
+facilita a integração com agentes diferentes e torna o fluxo mais
+auditável do que prompts livres sem contrato. Agentes continuam sujeitos
+a erros de seleção, extração e interpretação; guarde a versão do
+esquema, o modelo, os parâmetros, os resultados brutos e as decisões
+humanas.
 
-- ## Roda todo o pipeline de análise com `roda_analise_topicos`
+## Instalação
 
-## 🚀 Instalação
-
-Você pode instalar a versão de desenvolvimento diretamente do GitHub
-com:
+Instale a versão de desenvolvimento pelo GitHub:
 
 ``` r
-# Instale o devtools, se ainda não tiver
-install.packages("devtools")
-
-# Instale o litreviewR
-devtools::install_github("BaruqueRodrigues/litreviewR")
-```
-
-## 🧠 Pipeline automático de download
-
-A função `baixa_pdf_auto()` identifica automaticamente a origem do
-artigo:
-
-- **Artigos nacionais**: detectados por domínio ou `publisher` no
-  CrossRef → `baixa_pdf_aberto()`
-- **Artigos internacionais** ou com paywall → `baixa_pdf_scihub()`
-
-``` r
+install.packages("remotes")
+remotes::install_github("BaruqueRodrigues/litreviewR")
 library(litreviewR)
-
-# Lê o .bib
-referencias <- gera_referencia("minhas_referencias.bib")
-
-# Baixa os PDFs automaticamente
-baixa_pdf_auto(referencias, diretorio = "pdfs")
 ```
 
-🧠 Pipeline completo de análise de tópicos
+Alguns recursos usam dependências opcionais: `shiny` para o editor de
+instrumentos, `text2vec` para agrupamento TF-IDF e `cld2` para detecção
+de idioma dos resumos. LDA e STM usam as dependências listadas em
+`DESCRIPTION`.
 
-Se você já possui os PDFs, use roda_analise_topicos() para:
+## Um primeiro fluxo: textos nomeados e exploração de tópicos
 
-Ler os arquivos PDF Preprocessar os textos Rodar um modelo de tópicos
-(LDA, STM, NMF) Retornar os principais termos por tópico
+Os nomes do vetor viram IDs estáveis. Para um estudo real, use textos
+suficientemente longos e examine os documentos excluídos e os termos dos
+tópicos antes de interpretá-los.
 
 ``` r
-resultado <- roda_analise_topicos(
-  pasta_pdfs = "pdfs",
-  k = 10,
-  method = "lda",       # ou "stm", "nmf"
-  idioma = "portuguese",
-  modo = "agrupado"
+textos <- c(
+  artigo_001 = paste(rep("eleições campanha gastos partidos candidatos votos ", 20), collapse = ""),
+  artigo_002 = paste(rep("despesas campanha propaganda candidatos desempenho eleitoral ", 20), collapse = ""),
+  artigo_003 = paste(rep("instituições partidos representação política eleições ", 20), collapse = "")
 )
+dtm <- cria_dtm(textos = textos, idioma = "portuguese", min_freq = 1)
+dtm_obter_exclusoes(dtm)
 
-# Ver os tópicos
-resultado$topicos
+analise <- roda_analise_topicos(
+  dtm = dtm,
+  k = 2,
+  method = "lda",
+  seed = 1234
+)
+analise$topicos
+analise$associacao_documento_topico
 ```
 
-## ✨ Funções principais
+## Instrumentos próprios para sua revisão
 
-### Para Pegar artigos
-
-📚 gera_referencia()
-
-Para quê serve? Transforma um arquivo .bib (BibTeX) em uma lista
-organizada com título, DOI (se existir) e um ID amigável para nomear
-arquivos.
-
-Caso prático: “Baixei 100 referências do Mendeley e quero transformar
-isso em uma lista de tarefas para baixar os artigos automaticamente.”
+`schema_padrao()` cria um ponto de partida. Edite dimensões para sua
+área, valide a estrutura e salve-a em JSON. O editor Shiny local é
+opcional.
 
 ``` r
-# Extrai as referências do .bib
-refs <- gera_referencia("referencias.bib")
+instrumento <- schema_padrao()
+schema_validar(instrumento)
+# Abrir o editor em uma sessão interativa:
+# instrumento <- configura_revisao(instrumento)
+schema_escrever(instrumento, "instrumento.json")
 ```
 
-🇧🇷 baixa_pdf_aberto()
-
-Para quê serve? Baixa o PDF de artigos nacionais de acesso aberto, como
-da SciELO, ANPOCS, USP e outros repositórios acadêmicos brasileiros.
-
-Caso prático: “Tenho vários artigos da Revista Dados e Opinião Pública,
-que já são abertos. Não preciso do Sci-Hub.”
+A extração e a classificação usam serviços externos e exigem credenciais
+configuradas no ambiente R. Nenhuma chave deve ser gravada no esquema ou
+no repositório. Leia as vignettes antes de enviar textos de pesquisa a
+um provedor, considerando privacidade, consentimento, licença e regras
+da sua instituição.
 
 ``` r
-# Baixa um artigo nacional (SciELO)
-baixa_pdf_aberto(refs)
+# Exemplos de chamadas reais (requer credenciais e acesso de rede):
+# saida <- extrai_dimensoes(
+#   conteudo = texto_do_artigo,
+#   schema = instrumento,
+#   unidade = list(scope = "article", unit_id = "artigo_001"),
+#   provider = "deepseek"
+# )
+# rotulos <- classifica_dimensoes(
+#   conteudo = texto_do_artigo,
+#   schema = instrumento,
+#   unidade = list(scope = "article", unit_id = "artigo_001")
+# )
 ```
 
-🌍 baixa_pdf_scihub()
+## Vignettes e referência das funções
 
-Para quê serve? Baixa o PDF de artigos internacionais ou com paywall
-usando o Sci-Hub, a partir do DOI.
+As vignettes cobrem todas as funções exportadas, agrupadas por etapa do
+trabalho. Após instalar, abra-as no R com
+`browseVignettes("litreviewR")`.
 
-Caso prático: “Preciso do PDF de um artigo da Cambridge University
-Press, mas meu instituto não tem acesso.”
+- **Referências e aquisição:** `gera_referencias()`, funções
+  DOI/Crossref e `baixa_pdf_*()`.
+- **Corpus e tópicos:** resumos para anotação, DTM, LDA/STM e
+  agrupamento.
+- **Instrumentos e classificação:** esquema configurável, contratos, JEV
+  e categorias.
+- **Extração e evidências:** adaptadores LLM, extração estruturada e
+  validação de trechos.
+
+Consulte também `help(package = "litreviewR")` e a documentação de cada
+função com `?nome_da_funcao`.
+
+## Limites e uso responsável
+
+- A aquisição depende de fontes externas. `baixa_pdf_aberto()`
+  atualmente reconhece a rota SciELO; outros portais abertos ainda podem
+  não ser cobertos. O backend Sci-Hub é opcional e configurável, mas
+  disponibilidade, termos de uso, direitos autorais e regras locais
+  devem ser verificados pelo usuário.
+- LDA e STM são métodos exploratórios; a escolha de pré-processamento e
+  número de tópicos afeta resultados. NMF está suspenso nesta versão.
+- JEV produz classificação inferida e não fornece evidência documental
+  independente. Um LLM pode retornar campos incorretos ou citações
+  inadequadas.
+- A validação literal só confirma que uma citação está presente no texto
+  da passagem fornecida; não confirma que a citação sustenta a
+  interpretação.
+- Serviços externos podem mudar modelos, preços, limites e formatos de
+  API. Estimativas de custo do pacote não são faturas do provedor.
+- Testes automatizados verificam a implementação em dados controlados;
+  não demonstram validade científica em um corpus real.
+
+## Desenvolvimento
+
+Para rodar testes e verificações locais:
 
 ``` r
-baixa_pdf_scihub(refs[[10]], diretorio = "pdfs")
+devtools::test()
+devtools::check()
 ```
 
-🧠 baixa_pdf_auto()
+## Licença
 
-Para quê serve? Escolhe automaticamente o melhor método de download, com
-base no DOI ou no título, e no país/origem do artigo.
-
-Caso prático: “Tenho um mix de artigos nacionais e internacionais. Só
-quero que o script descubra onde baixar.”
-
-``` r
-baixa_pdf_auto(refs, diretorio = "pdfs")
-```
-
-### Para Analisar artigos
-
-📄 gera_csv_resumos_para_anotacao()
-
-Para quê serve? Quando você tem dezenas de PDFs e quer ler só os resumos
-para organizar em áreas temáticas ou correntes teóricas.
-
-Caso prático: “Sou coordenador de pesquisa e preciso dividir 120 artigos
-entre 3 assistentes. Quero que cada um anote qual área do conhecimento o
-artigo pertence.”
-
-``` r
-# Gera CSV com resumos dos PDFs para anotação manual
-gera_csv_resumos_para_anotacao("pdfs", caminho_saida = "anotacao.csv")
-```
-
-🧠 agrupa_topicos()
-
-Para quê serve? Agrupa os tópicos extraídos automaticamente em
-categorias maiores, usando ou um arquivo CSV manual ou agrupamento
-automático com clustering.
-
-Caso prático: “Extraí 15 tópicos de uma coleção de artigos. Agora quero
-agrupá-los em 3 grandes correntes: institucionalismo, economia política
-e opinião pública.”
-
-``` r
-# Agrupa tópicos manualmente ou via clustering
-agrupa_topicos(topicos = resultado$topicos, metodo = "cluster", n_clusters = 4)
-```
-
-🧾 extrai_topicos()
-
-Para quê serve? Roda um modelo LDA simples a partir de PDFs e retorna os
-principais termos por tópico.
-
-Caso prático: “Baixei os PDFs, agora quero uma ideia geral sobre os
-temas que aparecem mais nos artigos.”
-
-``` r
-topicos <- extrai_topicos("pdfs", k = 8, modo = "agrupado")
-```
-
-🏗 cria_dtm() + 🧩 modela_topicos()
-
-Para quê servem? Separadamente permitem mais controle e personalização
-sobre o pipeline. Use quando quiser testar diferentes abordagens com a
-mesma base textual.
-
-Caso prático: “Quero comparar o desempenho de LDA com NMF sobre a mesma
-base de documentos.”
-
-``` r
-dtm <- cria_dtm("pdfs", idioma = "portuguese")
-modelo_lda <- modela_topicos(dtm, k = 10, method = "lda")
-modelo_nmf <- modela_topicos(dtm, k = 10, method = "nmf")
-```
-
-🤖 modela_topicos(method = “stm”) + metadados
-
-Para quê serve? Permite usar variáveis como ano, autor, tipo de
-periódico como covariáveis no modelo, com o método STM.
-
-Caso prático: “Quero ver se os temas mudam com o tempo, comparando os
-tópicos de artigos publicados antes e depois de 2010.
-
-``` r
-# metadados deve conter colunas como 'ano_publicacao'
-modelo_stm <- modela_topicos(dtm, k = 10, method = "stm", metadados = dados_artigos)
-```
-
-## 🔧 Em desenvolvimento
-
-- Integração com modelos LLMs e SLMs (GPT, Claude, BERT etc)
-
-  - Classificação temática automática
-
-  - Sumarização de artigos
-
-  - Extração de tópicos
-
-- Visualizações com Shiny ou Quarto
-
-- Mapeamento de co-citações e redes semânticas
-
-## 👤 Autor
-
-Desenvolvido por [Baruque
-Rodrigues](https://github.com/baruqrodrigues)  
-Coordenador de Operacoes e cientista de dados interessado automacoes,
-money and politics, estatistica forense e NLP.
-
-## 📜 Licença
-
-MIT © 2025 — Você pode usar, modificar e redistribuir livremente com os
-devidos créditos.
+MIT. Veja `LICENSE`.

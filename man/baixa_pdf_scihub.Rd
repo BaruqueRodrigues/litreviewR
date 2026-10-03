@@ -2,33 +2,38 @@
 % Please edit documentation in R/baixa_pdf_scihub.R
 \name{baixa_pdf_scihub}
 \alias{baixa_pdf_scihub}
-\title{Baixa o PDF de um artigo acadêmico usando o Sci-Hub, a partir de um DOI ou título}
+\title{Baixar PDF pelo Sci-Hub com lista de domínios configurável}
 \usage{
-baixa_pdf_scihub(referencia, diretorio = ".", delay = 2)
+baixa_pdf_scihub(
+  referencia,
+  diretorio = ".",
+  delay = 2,
+  urls = getOption("litreviewR.scihub_urls", "https://sci-hub.se"),
+  .get = httr::GET,
+  .post = httr::POST,
+  .baixar = .baixar_pdf_validado
+)
 }
 \arguments{
-\item{referencia}{Uma lista com pelo menos os campos `title` (obrigatório) e `doi` (opcional). O campo `id` será usado como nome do arquivo salvo.}
+\item{referencia}{Lista com título e, opcionalmente, DOI e ID.}
 
-\item{diretorio}{Diretório onde o PDF será salvo. Será criado caso não exista. Padrão: `"."`.}
+\item{diretorio}{Diretório de destino.}
 
-\item{delay}{Tempo (em segundos) de espera após cada download, para evitar bloqueios. Padrão: `2`.}
+\item{delay}{Pausa em segundos entre domínios.}
+
+\item{urls}{URLs base do serviço, em ordem de tentativa.}
+
+\item{.get}{Transporte GET substituível para testes.}
+
+\item{.post}{Transporte POST substituível para testes.}
+
+\item{.baixar}{Função interna substituível para validar o arquivo retornado.}
 }
 \value{
-Nenhum valor de retorno. O PDF será salvo no diretório especificado.
+Resultado estruturado da tentativa de aquisição.
 }
 \description{
-Esta função acessa o Sci-Hub com base no DOI ou título da referência, extrai o link do PDF e realiza o download para o diretório especificado.
-}
-\examples{
-\dontrun{
-ref_com_doi <- list(
-id = "exemplo_doi",
-title = "Quid Pro Quo: Builders, Politicians, and Election Finance in India",
-doi = "10.2139/ssrn.1972987" )
-ref_sem_doi <- list(
-  id = "exemplo_sem_doi",
-    title = "Quid pro quo: Builders, politicians, and election finance in India")
-
-baixa_pdf_scihub(ref_com_doi, diretorio = "pdfs")
-baixa_pdf_scihub(ref_sem_doi, diretorio = "pdfs") }
+Os endereços são tentados na ordem fornecida em `urls`. O padrão vem de
+`getOption("litreviewR.scihub_urls")` e usa `https://sci-hub.se`; configure
+a opção com os domínios atuais quando o endereço mudar.
 }

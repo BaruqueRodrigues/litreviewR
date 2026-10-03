@@ -1,43 +1,57 @@
-#' Extrai tópicos representativos de PDFs via LDA
+#' Extrai tópicos representativos via LDA
 #'
-#' Lê PDFs de uma pasta, extrai o texto, aplica pré-processamento com stopwords no idioma desejado,
-#' realiza modelagem de tópicos com LDA e retorna os principais termos por tópico.
+#' Extrai texto, unifica o pré-processamento via `cria_dtm`, executa modelagem LDA
+#' com semente configurável e retorna os principais termos por tópico.
 #'
-#' @param pasta_pdfs Caminho da pasta contendo os arquivos PDF.
+#' @param pasta_pdfs Caminho da pasta contendo arquivos PDF (opcional se `dtm` ou `textos` informado).
+#' @param dtm Objeto `DocumentTermMatrix` pré-computado (opcional).
+#' @param textos Vetor de textos alternativo (opcional).
 #' @param k Número de tópicos a ser extraído (default = 10).
 #' @param max_termos Número de termos por tópico (default = 10).
-#' @param idioma Idioma para remoção de stopwords (ex: "portuguese", "english", "spanish").
-#' @param modo Modo de retorno: `"agrupado"` (padrão) ou `"detalhado"` (com beta por termo).
+#' @param idioma Idioma para remoção de stopwords. Default = "portuguese".
+#' @param min_freq Frequência mínima dos termos na DTM. Default = 1.
+#' @param seed Semente para reprodutibilidade (default = 1234).
+#' @param modo Modo de retorno: `"agrupado"` (padrão) ou `"detalhado"` (com probabilidade beta por termo).
 #'
 #' @return Um tibble com tópicos e termos, agrupados ou detalhados.
 #' @export
-extrai_topicos <- function(pasta_pdfs, k = 10, max_termos = 10, idioma = "portuguese", modo = c("agrupado", "detalhado")) {
+extrai_topicos <- function(pasta_pdfs = NULL,
+                           dtm = NULL,
+                           textos = NULL,
+                           k = 10,
+                           max_termos = 10,
+                           idioma = "portuguese",
+                           min_freq = 1,
+                           seed = 1234,
+                           modo = c("agrupado", "detalhado")) {
   modo <- match.arg(modo)
 
-  if (!requireNamespace("pdftools", quietly = TRUE)) stop("Instale o pacote 'pdftools'.")
-  if (!requireNamespace("tm", quietly = TRUE)) stop("Instale o pacote 'tm'.")
-  if (!requireNamespace("topicmodels", quietly = TRUE)) stop("Instale o pacote 'topicmodels'.")
-  if (!requireNamespace("tidytext", quietly = TRUE)) stop("Instale o pacote 'tidytext'.")
+  if (is.null(dtm)) {
+    if (!is.null(pasta_pdfs)) {
+      dtm <- cria_dtm(pasta_pdfs = pasta_pdfs, idioma = idioma, min_freq = min_freq)
+    } else if (!is.null(textos)) {
+      dtm <- cria_dtm(textos = textos, idioma = idioma, min_freq = min_freq)
+    } else {
+      stop("Forneça `pasta_pdfs`, `dtm` ou `textos`.", call. = FALSE)
+    }
+  }
 
-  arquivos <- list.files(pasta_pdfs, pattern = "\\.pdf$", full.names = TRUE)
+  if (!inherits(dtm, "DocumentTermMatrix")) {
+    stop("`dtm` deve ser uma DocumentTermMatrix.", call. = FALSE)
+  }
 
-  textos <- purrr::map_chr(arquivos, ~ {
-    raw <- tryCatch(pdftools::pdf_text(.x), error = function(e) NA)
-    paste(raw, collapse = " ")
-  })
+  if (nrow(dtm) == 0L || ncol(dtm) == 0L) {
+    stop("A DTM está vazia. Não é possível extrair tópicos.", call. = FALSE)
+  }
 
-  corpus <- tm::VCorpus(tm::VectorSource(textos))
-  corpus <- tm::tm_map(corpus, tm::content_transformer(tolower))
-  corpus <- tm::tm_map(corpus, tm::removePunctuation)
-  corpus <- tm::tm_map(corpus, tm::removeNumbers)
-  corpus <- tm::tm_map(corpus, tm::removeWords, tm::stopwords(idioma))
-  corpus <- tm::tm_map(corpus, tm::stripWhitespace)
+  if (!is.numeric(max_termos) || length(max_termos) != 1L || is.na(max_termos) ||
+      max_termos < 1 || max_termos %% 1 != 0) {
+    stop("`max_termos` deve ser um inteiro positivo.", call. = FALSE)
+  }
 
-  dtm <- tm::DocumentTermMatrix(corpus)
-  dtm <- dtm[rowSums(as.matrix(dtm)) > 0, ]
+  modelo <- modela_topicos(dtm, k = k, method = "lda", seed = seed)
 
-  modelo <- topicmodels::LDA(dtm, k = k, control = list(seed = 1234))
-
+  # Tópicos x termos via tidytext
   termos <- tidytext::tidy(modelo, matrix = "beta") %>%
     dplyr::group_by(topic) %>%
     dplyr::slice_max(beta, n = max_termos) %>%
@@ -47,11 +61,11 @@ extrai_topicos <- function(pasta_pdfs, k = 10, max_termos = 10, idioma = "portug
     return(dplyr::rename(termos, topico = topic))
   }
 
-  # modo agrupado
+  # Modo agrupado
   agrupado <- termos %>%
     dplyr::group_by(topic) %>%
     dplyr::summarise(texto = paste(term, collapse = " "), .groups = "drop") %>%
     dplyr::rename(topico = topic)
 
-  return(agrupado)
+  agrupado
 }

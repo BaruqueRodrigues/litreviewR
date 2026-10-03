@@ -8,21 +8,22 @@
 #' @return TRUE se for nacional, FALSE caso contrário.
 #' @export
 is_referencia_nacional <- function(doi) {
-  if (is.null(doi) || doi == "") return(FALSE)
+  doi <- normaliza_doi(doi)
+  if (!nzchar(doi)) return(FALSE)
 
   # 1. Usa cache se disponível
   if (exists(doi, envir = .litreview_cache)) {
     final_url <- get(doi, envir = .litreview_cache)
   } else {
-    url_doi <- paste0("https://doi.org/", doi)
-    res <- tryCatch(httr::GET(url_doi, httr::user_agent("Mozilla/5.0")), error = function(e) return(NULL))
-    if (is.null(res)) return(FALSE)
+    url_doi <- paste0("https://doi.org/", utils::URLencode(doi, reserved = FALSE))
+    res <- tryCatch(httr::GET(url_doi, httr::user_agent("litreviewR/0.2.0"), httr::timeout(20)), error = function(e) return(FALSE))
+    if (identical(res, FALSE)) return(FALSE)
     final_url <- res$url
     assign(doi, final_url, envir = .litreview_cache)
   }
 
   dominios_nacionais <- c("scielo.br", "revistas.usp.br", "anpocs.com", "periodicos.capes.gov.br")
-  if (any(stringr::str_detect(final_url, dominios_nacionais))) {
+  if (length(final_url) && any(stringr::str_detect(final_url, dominios_nacionais))) {
     return(TRUE)
   }
 

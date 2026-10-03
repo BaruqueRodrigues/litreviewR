@@ -1,0 +1,8 @@
+bibentry(
+  bibtype = "Manual",
+  title = "litreviewR: Automação de Revisões de Literatura e Análises Textuais com R",
+  author = person("Baruque", "Rodrigues"),
+  year = "2026",
+  note = "Pacote R, versão 0.1.0",
+  url = "https://github.com/BaruqueRodrigues/litreviewR"
+)

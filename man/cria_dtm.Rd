@@ -2,21 +2,34 @@
 % Please edit documentation in R/cria_dtm.R
 \name{cria_dtm}
 \alias{cria_dtm}
-\title{Cria uma DocumentTermMatrix a partir de PDFs brutos}
+\title{Cria uma DocumentTermMatrix a partir de PDFs ou textos}
 \usage{
-cria_dtm(pasta_pdfs, idioma = "portuguese", min_freq = 2)
+cria_dtm(
+  pasta_pdfs = NULL,
+  textos = NULL,
+  doc_ids = NULL,
+  idioma = "portuguese",
+  min_freq = 2
+)
 }
 \arguments{
-\item{pasta_pdfs}{Caminho da pasta contendo os arquivos PDF.}
+\item{pasta_pdfs}{Caminho da pasta contendo arquivos PDF (opcional se `textos` for informado).}
 
-\item{idioma}{Idioma para remoção de stopwords. Ex: "portuguese", "english".}
+\item{textos}{Vetor nomeado de textos (opcional, alternativo a `pasta_pdfs`). Se nomeado,
+os nomes são preservados como `doc_id`.}
+
+\item{doc_ids}{Vetor opcional de IDs de documentos para alinhar com `textos`.}
+
+\item{idioma}{Idioma para remoção de stopwords (ex: "portuguese", "english"). Default = "portuguese".}
 
 \item{min_freq}{Frequência mínima para manter um termo. Default = 2.}
 }
 \value{
-Uma DocumentTermMatrix.
+Um objeto `DocumentTermMatrix` com atributo `exclusoes` (tabela de documentos excluídos).
 }
 \description{
-Lê os PDFs de uma pasta, aplica pré-processamento (limpeza, stopwords, etc.)
-e retorna uma DocumentTermMatrix pronta para modelagem de tópicos.
+Processa textos ou PDFs de uma pasta, aplica pré-processamento (minúsculas,
+pontuação, números, stopwords no idioma desejado e frequência mínima de termos)
+e retorna uma DocumentTermMatrix pronta para modelagem, preservando identificadores
+de documentos e registrando o mapa de exclusões de documentos vazios.
 }

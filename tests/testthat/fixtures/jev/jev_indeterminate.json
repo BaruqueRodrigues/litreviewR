@@ -1,0 +1,20 @@
+{
+  "model": "jev-1.13.0",
+  "answers": {
+    "q0001": {
+      "type": "choice",
+      "choice": "__indeterminate__",
+      "confidence": 0.55,
+      "probabilities": {
+        "institutionalism": 0.25,
+        "behavioralism": 0.20,
+        "__indeterminate__": 0.55
+      }
+    }
+  },
+  "usage": {
+    "input_tokens": 140,
+    "output_tokens": 20,
+    "cost": 0.0001
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "article_id": "art-001",
+  "source": "open",
+  "status": "acquired",
+  "parameters": {
+    "url": "https://example.org/article.pdf"
+  },
+  "started_at": "2026-10-03T12:00:00Z",
+  "finished_at": "2026-10-03T12:00:01Z",
+  "error": null
+}

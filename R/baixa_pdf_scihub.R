@@ -1,91 +1,90 @@
-#' Baixa o PDF de um artigo acadêmico usando o Sci-Hub, a partir de um DOI ou título
+#' Baixar PDF pelo Sci-Hub com lista de domínios configurável
 #'
-#' Esta função acessa o Sci-Hub com base no DOI ou título da referência, extrai o link do PDF e realiza o download para o diretório especificado.
+#' Os endereços são tentados na ordem fornecida em `urls`. O padrão vem de
+#' `getOption("litreviewR.scihub_urls")` e usa `https://sci-hub.se`; configure
+#' a opção com os domínios atuais quando o endereço mudar.
 #'
-#' @param referencia Uma lista com pelo menos os campos `title` (obrigatório) e `doi` (opcional). O campo `id` será usado como nome do arquivo salvo.
-#' @param diretorio Diretório onde o PDF será salvo. Será criado caso não exista. Padrão: `"."`.
-#' @param delay Tempo (em segundos) de espera após cada download, para evitar bloqueios. Padrão: `2`.
-#'
-#' @return Nenhum valor de retorno. O PDF será salvo no diretório especificado.
-#'
+#' @param referencia Lista com título e, opcionalmente, DOI e ID.
+#' @param diretorio Diretório de destino.
+#' @param delay Pausa em segundos entre domínios.
+#' @param urls URLs base do serviço, em ordem de tentativa.
+#' @param .get Transporte GET substituível para testes.
+#' @param .post Transporte POST substituível para testes.
+#' @param .baixar Função interna substituível para validar o arquivo retornado.
+#' @return Resultado estruturado da tentativa de aquisição.
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' ref_com_doi <- list(
-#' id = "exemplo_doi",
-#' title = "Quid Pro Quo: Builders, Politicians, and Election Finance in India",
-#' doi = "10.2139/ssrn.1972987" )
-#' ref_sem_doi <- list(
-#'   id = "exemplo_sem_doi",
-#'     title = "Quid pro quo: Builders, politicians, and election finance in India")
-#'
-#' baixa_pdf_scihub(ref_com_doi, diretorio = "pdfs")
-#' baixa_pdf_scihub(ref_sem_doi, diretorio = "pdfs") }
-baixa_pdf_scihub <- function(referencia, diretorio = ".", delay = 2) {
-  fs::dir_create(diretorio)
-
-  id <- referencia$id %||% base::gsub("[^a-zA-Z0-9]", "_", referencia$title)
-  base_url <- "https://sci-hub.se/"
-
-  busca <- if (!base::is.null(referencia$doi) && referencia$doi != "") {
-    referencia$doi
-  } else if (!base::is.null(referencia$title) && referencia$title != "") {
-    referencia$title
-  } else {
-    cli::cli_alert_warning("Referência '{id}' não possui DOI nem título.")
-    return(base::invisible(NULL))
+baixa_pdf_scihub <- function(
+    referencia, diretorio = ".", delay = 2,
+    urls = getOption("litreviewR.scihub_urls", "https://sci-hub.se"),
+    .get = httr::GET, .post = httr::POST,
+    .baixar = .baixar_pdf_validado) {
+  id <- .referencia_id(referencia)
+  if (!is.numeric(delay) || length(delay) != 1L || is.na(delay) || delay < 0) {
+    stop("`delay` deve ser um número não negativo.", call. = FALSE)
   }
+  if (!is.character(urls) || !length(urls) || anyNA(urls) || any(!nzchar(urls))) {
+    stop("`urls` deve conter ao menos um endereço base válido.", call. = FALSE)
+  }
+  urls <- sub("/+$", "", urls)
+  doi <- normaliza_doi(referencia$doi %||% "")
+  busca <- if (nzchar(doi)) doi else referencia$title %||% ""
+  if (!is.character(busca) || length(busca) != 1L || is.na(busca) || !nzchar(busca)) {
+    return(.download_result(id, "indisponivel", source = "scihub",
+                            reason = "Referência sem DOI ou título."))
+  }
+  destino <- fs::path(diretorio, .safe_pdf_name(id))
+  falhas <- character()
 
-  res <- base::tryCatch({
-    if (!base::is.null(referencia$doi) && referencia$doi != "") {
-      httr::GET(base::paste0(base_url, busca), httr::user_agent("Mozilla/5.0"))
-    } else {
-      httr::POST(base_url, body = list(request = busca), encode = "form",
-                 httr::user_agent("Mozilla/5.0"))
+  for (base_url in urls) {
+    pagina_url <- paste0(base_url, "/")
+    resposta <- tryCatch({
+      if (nzchar(doi)) {
+        .get(paste0(pagina_url, utils::URLencode(busca, reserved = FALSE)),
+             httr::user_agent("litreviewR/0.2.0"), httr::timeout(30))
+      } else {
+        .post(pagina_url, body = list(request = busca), encode = "form",
+              httr::user_agent("litreviewR/0.2.0"), httr::timeout(30))
+      }
+    }, error = function(e) e)
+    if (inherits(resposta, "error")) {
+      falhas <- c(falhas, paste0(base_url, ": ", conditionMessage(resposta)))
+      if (delay > 0 && base_url != utils::tail(urls, 1L)) Sys.sleep(delay)
+      next
     }
-  }, error = function(e) {
-    cli::cli_alert_danger("Erro ao acessar o Sci-Hub para '{busca}': {e$message}")
-    return(NULL)
-  })
-
-  if (base::is.null(res) || res$status_code != 200) {
-    cli::cli_alert_danger("Não foi possível acessar o Sci-Hub para '{busca}'.")
-    return(base::invisible(NULL))
-  }
-
-  html <- xml2::read_html(res)
-
-  pdf_node <- rvest::html_node(html, xpath = "//embed[contains(@src, '.pdf')]") %||%
-    rvest::html_node(html, xpath = "//iframe[contains(@src, '.pdf')]")
-
-  if (base::is.na(pdf_node)) {
-    cli::cli_alert_info("PDF não encontrado para '{busca}' (nenhum <embed> ou <iframe> com .pdf).")
-    return(base::invisible(NULL))
-  }
-
-  pdf_url <- rvest::html_attr(pdf_node, "src")
-  if (!stringr::str_starts(pdf_url, "http")) {
-    pdf_url <- base::paste0("https:", pdf_url)
-  }
-
-  caminho <- fs::path(diretorio, base::paste0(id, ".pdf"))
-
-  base::tryCatch({
-    download <- httr::GET(pdf_url,
-                          httr::write_disk(caminho, overwrite = TRUE),
-                          httr::user_agent("Mozilla/5.0"))
-    if (download$status_code == 200) {
-      cli::cli_alert_success("PDF salvo como: {caminho}")
-    } else {
-      cli::cli_alert_danger("Erro ao baixar PDF: status {download$status_code}")
+    status_http <- tryCatch(httr::status_code(resposta), error = function(e) NA_integer_)
+    if (is.na(status_http) || status_http < 200L || status_http >= 300L) {
+      falhas <- c(falhas, paste0(base_url, ": HTTP ", status_http))
+      if (delay > 0 && base_url != utils::tail(urls, 1L)) Sys.sleep(delay)
+      next
     }
-  }, error = function(e) {
-    cli::cli_alert_danger("Erro ao baixar PDF de '{pdf_url}': {e$message}")
-  })
 
-  base::Sys.sleep(delay)
-  base::invisible(NULL)
+    html <- tryCatch(xml2::read_html(resposta), error = function(e) NULL)
+    if (is.null(html)) {
+      falhas <- c(falhas, paste0(base_url, ": HTML inválido"))
+      next
+    }
+    pagina_final <- tryCatch(resposta$url %||% pagina_url, error = function(e) pagina_url)
+    pdf_url <- .extrair_url_pdf_scihub(html, pagina_final)
+    if (is.null(pdf_url)) {
+      falhas <- c(falhas, paste0(base_url, ": sem link embed/iframe"))
+      next
+    }
+    resultado <- .baixar(pdf_url, destino, id, "scihub", referer = pagina_final)
+    if (resultado$status %in% c("sucesso", "ja_existente")) return(resultado)
+    falhas <- c(falhas, paste0(base_url, ": ", resultado$reason %||% "download inválido"))
+    if (delay > 0 && base_url != utils::tail(urls, 1L)) Sys.sleep(delay)
+  }
+  .download_result(id, "erro", source = "scihub", reason = paste(falhas, collapse = " | "))
 }
 
-
+.extrair_url_pdf_scihub <- function(html, base_url) {
+  nodes <- tryCatch(rvest::html_elements(html, xpath = "//embed[@src] | //iframe[@src]"),
+                    error = function(e) NULL)
+  if (is.null(nodes) || !length(nodes)) return(NULL)
+  srcs <- rvest::html_attr(nodes, "src")
+  srcs <- srcs[!is.na(srcs) & nzchar(srcs)]
+  if (!length(srcs)) return(NULL)
+  pdf_candidate <- grep("\\.pdf([?#].*)?$", srcs, ignore.case = TRUE)
+  src <- if (length(pdf_candidate)) srcs[[pdf_candidate[[1]]]] else srcs[[1]]
+  tryCatch(xml2::url_absolute(src, base_url), error = function(e) NULL)
+}

@@ -1,0 +1,110 @@
+---
+title: "Preparar corpus e explorar tópicos"
+author: "litreviewR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Preparar corpus e explorar tópicos}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(litreviewR)
+```
+
+Esta vignette mostra como transformar textos identificados em um corpus
+analisável, rastrear exclusões e produzir modelos exploratórios. Modelagem de
+tópicos organiza padrões lexicais; os tópicos precisam de interpretação
+substantiva e não equivalem automaticamente a temas ou correntes teóricas.
+
+## Resumos para triagem humana
+
+`gera_csv_resumos_para_anotacao()` percorre PDFs e cria uma tabela com resumo,
+origem, estado da extração e colunas vazias para anotação. Recortes incertos
+ficam marcados para inspeção. OCR é opcional e requer suporte externo instalado.
+
+```{r, eval=FALSE}
+triagem <- gera_csv_resumos_para_anotacao(
+  pasta_pdfs = "pdfs",
+  caminho_saida = "triagem.csv",
+  ocr = FALSE
+)
+```
+
+## Criar uma DTM com IDs estáveis
+
+`cria_dtm()` aceita uma pasta de PDFs ou um vetor nomeado de textos. Nomes dos
+textos se tornam IDs de documentos; forneça `doc_ids` quando seu vetor não
+estiver nomeado. A limpeza depende do idioma e dos parâmetros escolhidos.
+
+```{r}
+textos <- c(
+  artigo_1 = paste(rep("campanha eleitoral gastos partidos candidatos votos ", 8), collapse = ""),
+  artigo_2 = paste(rep("eleicoes financiamento campanha propaganda candidatos ", 8), collapse = ""),
+  artigo_3 = paste(rep("instituicoes partidos representacao politica eleicoes ", 8), collapse = "")
+)
+dtm <- cria_dtm(textos = textos, idioma = "portuguese", min_freq = 1)
+dim(dtm)
+dtm_obter_exclusoes(dtm)
+```
+
+`dtm_obter_exclusoes()` retorna documentos removidos ou sem termos úteis, com
+os motivos disponíveis no objeto. Revise essas exclusões antes de comparar
+resultados entre subconjuntos.
+
+## Ajustar e inspecionar modelos
+
+`modela_topicos()` ajusta LDA ou STM sobre uma DTM. Para STM, os metadados devem
+conter um `doc_id` único que corresponda aos IDs da DTM; as fórmulas são
+especificadas explicitamente. NMF está temporariamente indisponível.
+
+```{r, eval=FALSE}
+modelo_lda <- modela_topicos(dtm, k = 2, method = "lda", seed = 1234)
+modelo_stm <- modela_topicos(
+  dtm, k = 2, method = "stm",
+  metadados = data.frame(doc_id = rownames(as.matrix(dtm)), ano = 2024),
+  formula_prevalence = ~ ano
+)
+```
+
+`extrai_topicos()` oferece um atalho LDA e retorna termos agrupados ou pesos
+por termo. `roda_analise_topicos()` encadeia preparação, modelagem e extração;
+retorna também modelo, DTM, exclusões e, quando disponível, associação entre
+documentos e tópicos.
+
+```{r}
+topicos <- extrai_topicos(dtm = dtm, k = 2, max_termos = 5, modo = "agrupado")
+topicos
+```
+
+```{r, eval=FALSE}
+analise <- roda_analise_topicos(
+  textos = textos, k = 2, method = "lda", min_freq = 1, seed = 1234
+)
+analise$topicos
+analise$associacao_documento_topico
+analise$exclusoes
+```
+
+## Agrupar tópicos com anotação revisável
+
+`agrupa_topicos()` aceita rótulos humanos em CSV (`metodo = "manual"`) ou um
+agrupamento lexical TF-IDF/k-means (`metodo = "cluster"`, que requer o pacote
+opcional `text2vec`). O agrupamento automático usa coocorrência de termos, não
+embeddings semânticos. Para decisões teóricas, prefira critérios explícitos e
+anotação validada por pesquisadores.
+
+```{r, eval=FALSE}
+# O CSV deve relacionar cada ID de tópico a uma coluna grupo/area/categoria.
+grupos <- agrupa_topicos(topicos, metodo = "manual", arquivo_csv = "rotulos.csv")
+# Alternativa lexical exploratória; instalar text2vec antes.
+grupos_auto <- agrupa_topicos(topicos, metodo = "cluster", n_clusters = 2)
+```
+
+## Funções cobertas
+
+- `gera_csv_resumos_para_anotacao()`.
+- `cria_dtm()` e `dtm_obter_exclusoes()`.
+- `extrai_topicos()`, `modela_topicos()` e `roda_analise_topicos()`.
+- `agrupa_topicos()`.

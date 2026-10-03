@@ -1,0 +1,18 @@
+{
+  "article_id": "art-001",
+  "source_key": "zotero:item-1",
+  "doi_original": "10.1234/example",
+  "doi_normalized": "10.1234/example",
+  "title": "Estudo sintético",
+  "authors": [
+    "Autora Exemplo"
+  ],
+  "year": 2024,
+  "journal": "Revista Exemplo",
+  "url": null,
+  "abstract": "Resumo sintético.",
+  "provenance": {
+    "source": "fixture"
+  },
+  "references": []
+}

@@ -1,0 +1,21 @@
+{
+  "model": "jev-1.13.0",
+  "answers": {
+    "q0001": {
+      "type": "choice",
+      "choice": "institutionalism",
+      "confidence": 0.88,
+      "probabilities": {
+        "institutionalism": 0.88,
+        "behavioralism": 0.08,
+        "marxism": 0.03,
+        "__indeterminate__": 0.01
+      }
+    }
+  },
+  "usage": {
+    "input_tokens": 150,
+    "output_tokens": 25,
+    "cost": 0.0001
+  }
+}

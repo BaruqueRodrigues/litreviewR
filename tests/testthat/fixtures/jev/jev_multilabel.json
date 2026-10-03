@@ -1,0 +1,28 @@
+{
+  "model": "jev-1.13.0",
+  "answers": {
+    "q0001": {
+      "type": "choice",
+      "choice": "yes",
+      "confidence": 0.92,
+      "probabilities": {
+        "yes": 0.92,
+        "no": 0.08
+      }
+    },
+    "q0002": {
+      "type": "choice",
+      "choice": "no",
+      "confidence": 0.85,
+      "probabilities": {
+        "yes": 0.15,
+        "no": 0.85
+      }
+    }
+  },
+  "usage": {
+    "input_tokens": 200,
+    "output_tokens": 40,
+    "cost": 0.0002
+  }
+}

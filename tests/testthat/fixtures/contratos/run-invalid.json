@@ -1,0 +1,419 @@
+{
+  "schema_snapshot": {
+    "schema_id": "litreview-social-sciences",
+    "format_version": "1.0.0",
+    "revision": 1,
+    "title": "Instrumento geral de ciências sociais",
+    "area": "",
+    "instruction_language": "pt-BR",
+    "dimensions": [
+      {
+        "id": "research_question",
+        "label": "Pergunta de pesquisa",
+        "definition": "Problema ou pergunta que o trabalho procura responder.",
+        "active": true,
+        "type": "text",
+        "scope": "article",
+        "operations": [
+          "extract"
+        ],
+        "instruction": "Registre a pergunta como formulada pelos autores.",
+        "search_terms": [],
+        "include_examples": [],
+        "exclude_examples": [],
+        "evidence_required": true,
+        "categories": [],
+        "scoring_rubric": [],
+        "applicability": {
+          "all": [],
+          "any": []
+        },
+        "inference_policy": "explicit_only",
+        "review_rule": {
+          "type": "if_ambiguous",
+          "threshold": null,
+          "experimental": false
+        }
+      },
+      {
+        "id": "objective",
+        "label": "Objetivo",
+        "definition": "Objetivo declarado pelo trabalho.",
+        "active": true,
+        "type": "text",
+        "scope": "article",
+        "operations": [
+          "extract"
+        ],
+        "instruction": "Registre o objetivo declarado pelos autores.",
+        "search_terms": [],
+        "include_examples": [],
+        "exclude_examples": [],
+        "evidence_required": true,
+        "categories": [],
+        "scoring_rubric": [],
+        "applicability": {
+          "all": [],
+          "any": []
+        },
+        "inference_policy": "explicit_only",
+        "review_rule": {
+          "type": "if_ambiguous",
+          "threshold": null,
+          "experimental": false
+        }
+      },
+      {
+        "id": "central_concepts",
+        "label": "Conceitos centrais",
+        "definition": "Conceitos centrais e definições usadas no trabalho.",
+        "active": true,
+        "type": "text",
+        "scope": "article",
+        "operations": [
+          "extract"
+        ],
+        "instruction": "Liste os conceitos e suas definições conforme o texto.",
+        "search_terms": [],
+        "include_examples": [],
+        "exclude_examples": [],
+        "evidence_required": true,
+        "categories": [],
+        "scoring_rubric": [],
+        "applicability": {
+          "all": [],
+          "any": []
+        },
+        "inference_policy": "explicit_only",
+        "review_rule": {
+          "type": "if_ambiguous",
+          "threshold": null,
+          "experimental": false
+        }
+      },
+      {
+        "id": "theoretical_orientation",
+        "label": "Orientação teórica",
+        "definition": "Corrente ou orientação teórica explicitamente adotada.",
+        "active": true,
+        "type": "text",
+        "scope": "article",
+        "operations": [
+          "extract"
+        ],
+        "instruction": "Registre apenas a orientação que os autores adotam explicitamente.",
+        "search_terms": [],
+        "include_examples": [],
+        "exclude_examples": [],
+        "evidence_required": true,
+        "categories": [],
+        "scoring_rubric": [],
+        "applicability": {
+          "all": [],
+          "any": []
+        },
+        "inference_policy": "explicit_only",
+        "review_rule": {
+          "type": "if_ambiguous",
+          "threshold": null,
+          "experimental": false
+        }
+      },
+      {
+        "id": "hypotheses_propositions",
+        "label": "Hipóteses ou proposições",
+        "definition": "Hipóteses, proposições ou expectativas formuladas pelos autores.",
+        "active": true,
+        "type": "text",
+        "scope": "article",
+        "operations": [
+          "extract"
+        ],
+        "instruction": "Transcreva ou resuma as hipóteses e proposições declaradas.",
+        "search_terms": [],
+        "include_examples": [],
+        "exclude_examples": [],
+        "evidence_required": true,
+        "categories": [],
+        "scoring_rubric": [],
+        "applicability": {
+          "all": [],
+          "any": []
+        },
+        "inference_policy": "explicit_only",
+        "review_rule": {
+          "type": "if_ambiguous",
+          "threshold": null,
+          "experimental": false
+        }
+      },
+      {
+        "id": "explanatory_mechanism",
+        "label": "Mecanismo explicativo",
+        "definition": "Processo que conecta causas, condições e resultados.",
+        "active": true,
+        "type": "text",
+        "scope": "article",
+        "operations": [
+          "extract"
+        ],
+        "instruction": "Descreva o mecanismo tal como apresentado pelos autores.",
+        "search_terms": [],
+        "include_examples": [],
+        "exclude_examples": [],
+        "evidence_required": true,
+        "categories": [],
+        "scoring_rubric": [],
+        "applicability": {
+          "all": [],
+          "any": []
+        },
+        "inference_policy": "explicit_only",
+        "review_rule": {
+          "type": "if_ambiguous",
+          "threshold": null,
+          "experimental": false
+        }
+      },
+      {
+        "id": "context",
+        "label": "Contexto",
+        "definition": "Local, período e contexto institucional ou social do trabalho.",
+        "active": true,
+        "type": "text",
+        "scope": "article",
+        "operations": [
+          "extract"
+        ],
+        "instruction": "Registre o contexto geográfico, temporal e institucional informado.",
+        "search_terms": [],
+        "include_examples": [],
+        "exclude_examples": [],
+        "evidence_required": true,
+        "categories": [],
+        "scoring_rubric": [],
+        "applicability": {
+          "all": [],
+          "any": []
+        },
+        "inference_policy": "explicit_only",
+        "review_rule": {
+          "type": "if_ambiguous",
+          "threshold": null,
+          "experimental": false
+        }
+      },
+      {
+        "id": "unit_of_analysis",
+        "label": "Unidade de análise",
+        "definition": "Entidades, pessoas, casos ou materiais analisados.",
+        "active": true,
+        "type": "text",
+        "scope": "article",
+        "operations": [
+          "extract"
+        ],
+        "instruction": "Identifique a unidade de análise explicitamente descrita.",
+        "search_terms": [],
+        "include_examples": [],
+        "exclude_examples": [],
+        "evidence_required": true,
+        "categories": [],
+        "scoring_rubric": [],
+        "applicability": {
+          "all": [],
+          "any": []
+        },
+        "inference_policy": "explicit_only",
+        "review_rule": {
+          "type": "if_ambiguous",
+          "threshold": null,
+          "experimental": false
+        }
+      },
+      {
+        "id": "research_design",
+        "label": "Desenho de pesquisa",
+        "definition": "Estratégia geral de investigação.",
+        "active": true,
+        "type": "text",
+        "scope": "article",
+        "operations": [
+          "extract"
+        ],
+        "instruction": "Classifique ou descreva o desenho indicado pelos autores.",
+        "search_terms": [],
+        "include_examples": [],
+        "exclude_examples": [],
+        "evidence_required": true,
+        "categories": [],
+        "scoring_rubric": [],
+        "applicability": {
+          "all": [],
+          "any": []
+        },
+        "inference_policy": "explicit_only",
+        "review_rule": {
+          "type": "if_ambiguous",
+          "threshold": null,
+          "experimental": false
+        }
+      },
+      {
+        "id": "data_sources",
+        "label": "Dados",
+        "definition": "Fontes, amostra, casos ou materiais utilizados.",
+        "active": true,
+        "type": "text",
+        "scope": "article",
+        "operations": [
+          "extract"
+        ],
+        "instruction": "Descreva as fontes de dados e a amostra ou seleção de casos.",
+        "search_terms": [],
+        "include_examples": [],
+        "exclude_examples": [],
+        "evidence_required": true,
+        "categories": [],
+        "scoring_rubric": [],
+        "applicability": {
+          "all": [],
+          "any": []
+        },
+        "inference_policy": "explicit_only",
+        "review_rule": {
+          "type": "if_ambiguous",
+          "threshold": null,
+          "experimental": false
+        }
+      },
+      {
+        "id": "analysis_method",
+        "label": "Método de análise",
+        "definition": "Métodos usados para analisar os dados.",
+        "active": true,
+        "type": "text",
+        "scope": "article",
+        "operations": [
+          "extract"
+        ],
+        "instruction": "Registre os métodos analíticos descritos no artigo.",
+        "search_terms": [],
+        "include_examples": [],
+        "exclude_examples": [],
+        "evidence_required": true,
+        "categories": [],
+        "scoring_rubric": [],
+        "applicability": {
+          "all": [],
+          "any": []
+        },
+        "inference_policy": "explicit_only",
+        "review_rule": {
+          "type": "if_ambiguous",
+          "threshold": null,
+          "experimental": false
+        }
+      },
+      {
+        "id": "variables_categories",
+        "label": "Variáveis ou categorias",
+        "definition": "Variáveis quantitativas ou categorias qualitativas relevantes.",
+        "active": true,
+        "type": "text",
+        "scope": "article",
+        "operations": [
+          "extract"
+        ],
+        "instruction": "Liste os desfechos, fatores explicativos ou categorias usados.",
+        "search_terms": [],
+        "include_examples": [],
+        "exclude_examples": [],
+        "evidence_required": true,
+        "categories": [],
+        "scoring_rubric": [],
+        "applicability": {
+          "all": [],
+          "any": []
+        },
+        "inference_policy": "explicit_only",
+        "review_rule": {
+          "type": "if_ambiguous",
+          "threshold": null,
+          "experimental": false
+        }
+      },
+      {
+        "id": "main_results",
+        "label": "Resultados principais",
+        "definition": "Achados que respondem à pergunta de pesquisa.",
+        "active": true,
+        "type": "text",
+        "scope": "article",
+        "operations": [
+          "extract"
+        ],
+        "instruction": "Resuma os resultados relatados pelos autores.",
+        "search_terms": [],
+        "include_examples": [],
+        "exclude_examples": [],
+        "evidence_required": true,
+        "categories": [],
+        "scoring_rubric": [],
+        "applicability": {
+          "all": [],
+          "any": []
+        },
+        "inference_policy": "explicit_only",
+        "review_rule": {
+          "type": "if_ambiguous",
+          "threshold": null,
+          "experimental": false
+        }
+      },
+      {
+        "id": "stated_limitations",
+        "label": "Limitações declaradas",
+        "definition": "Limitações reconhecidas pelos autores.",
+        "active": true,
+        "type": "text",
+        "scope": "article",
+        "operations": [
+          "extract"
+        ],
+        "instruction": "Registre limitações declaradas; não deduza limitações próprias.",
+        "search_terms": [],
+        "include_examples": [],
+        "exclude_examples": [],
+        "evidence_required": true,
+        "categories": [],
+        "scoring_rubric": [],
+        "applicability": {
+          "all": [],
+          "any": []
+        },
+        "inference_policy": "explicit_only",
+        "review_rule": {
+          "type": "if_ambiguous",
+          "threshold": null,
+          "experimental": false
+        }
+      }
+    ]
+  },
+  "document_hashes": {
+    "doc-001": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "software_version": "0.1.0",
+  "parameters": {
+    "seed": 1
+  },
+  "tasks": [
+    {
+      "task_id": "task-001",
+      "status": "pending"
+    }
+  ],
+  "started_at": "2026-10-03T12:00:00Z",
+  "finished_at": null
+}

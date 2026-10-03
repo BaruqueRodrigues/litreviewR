@@ -2,22 +2,42 @@
 % Please edit documentation in R/modela_topicos.R
 \name{modela_topicos}
 \alias{modela_topicos}
-\title{Modela tópicos a partir de uma DTM usando LDA, STM ou NMF}
+\title{Modelar tópicos a partir de uma DTM usando LDA ou STM}
 \usage{
-modela_topicos(dtm, k = 10, method = c("lda", "stm", "nmf"), metadados = NULL)
+modela_topicos(
+  dtm,
+  k = 10,
+  method = c("lda", "stm", "nmf"),
+  metadados = NULL,
+  formula_prevalence = NULL,
+  formula_content = NULL,
+  seed = 1234,
+  verbose = FALSE
+)
 }
 \arguments{
-\item{dtm}{Uma DocumentTermMatrix (DTM), tipicamente criada via `tm`.}
+\item{dtm}{Uma `DocumentTermMatrix` gerada via `cria_dtm` ou `tm`.}
 
-\item{k}{Número de tópicos.}
+\item{k}{Número de tópicos desejado. Default = 10.}
 
-\item{method}{Algoritmo de modelagem: `"lda"`, `"stm"` ou `"nmf"`.}
+\item{method}{Algoritmo de modelagem: `"lda"` ou `"stm"`. `"nmf"` é
+reconhecido para retornar uma mensagem explícita de indisponibilidade.}
 
-\item{metadados}{(opcional) Data frame com metadados, obrigatório se `method = "stm"`.}
+\item{metadados}{Data frame de covariáveis (obrigatório para STM com fórmulas ou análise de metadados).}
+
+\item{formula_prevalence}{Fórmula para covariáveis de prevalência no STM (ex: `~ ano + autor`).}
+
+\item{formula_content}{Fórmula para covariáveis de conteúdo no STM.}
+
+\item{seed}{Semente para reprodutibilidade. Default = 1234.}
+
+\item{verbose}{Indica se o modelo deve exibir mensagens durante o ajuste. Default = FALSE.}
 }
 \value{
-O objeto do modelo ajustado.
+Objeto de modelo ajustado com classe do respectivo método.
 }
 \description{
-Recebe uma DocumentTermMatrix e aplica o modelo escolhido.
+Ajusta modelos de tópicos a partir de uma `DocumentTermMatrix`, com controle
+de semente aleatória e alinhamento seguro de metadados para STM. O caminho
+NMF fica temporariamente suspenso até haver um backend mantido e verificável.
 }

@@ -1,71 +1,54 @@
-#' Baixa PDF de artigos hospedados em portais nacionais de acesso aberto (ex: SciELO)
+#' Baixar e validar o PDF ligado a um DOI em fonte aberta suportada
 #'
-#' A função tenta baixar automaticamente o PDF de um artigo hospedado em repositórios nacionais,
-#' como a SciELO. Se o DOI não estiver presente, tenta buscar por título via CrossRef.
+#' Nesta versão, o redirecionamento do DOI é aceito quando leva ao portal
+#' SciELO. A função retorna um resultado estruturado; uma falha nunca é
+#' representada como sucesso ou como `NULL`.
 #'
-#' @param referencia Uma lista contendo ao menos `title`, e opcionalmente `doi` e `id`.
-#' @param diretorio Diretório onde o PDF será salvo. Default é `"."`.
-#' @param delay Tempo em segundos entre as requisições (para respeitar o servidor). Default: `2`.
-#'
-#' @return O PDF é salvo no diretório indicado. Retorna `invisible(NULL)`.
+#' @param referencia Lista contendo título e, opcionalmente, DOI e ID.
+#' @param diretorio Diretório de destino.
+#' @param delay Pausa em segundos após a tentativa.
+#' @param .get Transporte HTTP substituível para testes.
+#' @param .baixar Função interna substituível para validar o arquivo retornado.
+#' @return Resultado com ID, status, caminho, fonte, URL e motivo de falha.
 #' @export
-baixa_pdf_aberto <- function(referencia, diretorio = ".", delay = 2) {
-  fs::dir_create(diretorio)
-
-  id <- referencia$id %||% gsub("[^a-zA-Z0-9]", "_", referencia$title)
-  doi <- referencia$doi
-
-  if (is.null(doi) || doi == "") {
-    cli::cli_alert_info("Referência '{id}' não possui DOI. Buscando por título...")
-    doi <- descobre_doi_por_titulo(referencia$title)
-
-    if (is.null(doi)) {
-      cli::cli_alert_warning("Não foi possível encontrar o DOI para: {referencia$title}")
-      return(invisible(NULL))
-    }
-
-    cli::cli_alert_success("DOI encontrado: {doi}")
+baixa_pdf_aberto <- function(referencia, diretorio = ".", delay = 2,
+                             .get = httr::GET,
+                             .baixar = .baixar_pdf_validado) {
+  id <- .referencia_id(referencia)
+  if (!is.numeric(delay) || length(delay) != 1L || is.na(delay) || delay < 0) {
+    stop("`delay` deve ser um número não negativo.", call. = FALSE)
+  }
+  titulo <- referencia$title %||% ""
+  titulo_valido <- is.character(titulo) && length(titulo) == 1L && !is.na(titulo) && nzchar(trimws(titulo))
+  doi <- normaliza_doi(referencia$doi %||% "")
+  if (!nzchar(doi) && titulo_valido) doi <- descobre_doi_por_titulo(titulo)
+  if (is.null(doi) || !nzchar(doi)) {
+    return(.download_result(id, "indisponivel", source = "aberto",
+                            reason = "Não foi possível confirmar um DOI para a referência."))
   }
 
-  url_doi <- paste0("https://doi.org/", doi)
-
-  res <- tryCatch({
-    httr::GET(url_doi, httr::user_agent("Mozilla/5.0"))
-  }, error = function(e) {
-    cli::cli_alert_danger("Erro ao acessar DOI '{doi}': {e$message}")
-    return(NULL)
-  })
-
-  if (is.null(res) || res$status_code != 200) {
-    cli::cli_alert_danger("Não foi possível acessar a página do DOI '{doi}'.")
-    return(invisible(NULL))
+  doi_url <- paste0("https://doi.org/", utils::URLencode(doi, reserved = FALSE))
+  resposta <- tryCatch(
+    .get(doi_url, httr::user_agent("litreviewR/0.2.0"), httr::timeout(30)),
+    error = function(e) e
+  )
+  if (inherits(resposta, "error")) {
+    return(.download_result(id, "erro", source = "aberto", url = doi_url,
+                            reason = conditionMessage(resposta)))
   }
-
-  url_artigo <- res$url
-
-  if (!grepl("scielo.br", url_artigo)) {
-    cli::cli_alert_info("Artigo não está hospedado na SciELO: {url_artigo}")
-    return(invisible(NULL))
+  status_http <- tryCatch(httr::status_code(resposta), error = function(e) NA_integer_)
+  if (is.na(status_http) || status_http < 200L || status_http >= 300L) {
+    return(.download_result(id, "erro", source = "aberto", url = doi_url,
+                            reason = paste("DOI retornou HTTP", status_http)))
   }
-
-  pdf_url <- paste0(url_artigo, "?format=pdf&lang=pt")
-  caminho <- fs::path(diretorio, paste0(id, ".pdf"))
-
-  download <- tryCatch({
-    httr::GET(pdf_url,
-              httr::write_disk(caminho, overwrite = TRUE),
-              httr::user_agent("Mozilla/5.0"))
-  }, error = function(e) {
-    cli::cli_alert_danger("Erro ao baixar PDF de '{pdf_url}': {e$message}")
-    return(NULL)
-  })
-
-  if (!is.null(download) && download$status_code == 200) {
-    cli::cli_alert_success("PDF salvo como: {caminho}")
-  } else {
-    cli::cli_alert_danger("Erro ao salvar PDF de '{pdf_url}'")
+  url_artigo <- tryCatch(resposta$url %||% "", error = function(e) "")
+  if (!grepl("(^|\\.)scielo\\.br(/|$)", sub("^https?://", "", url_artigo), ignore.case = TRUE)) {
+    return(.download_result(id, "indisponivel", source = "aberto", url = url_artigo,
+                            reason = "O redirecionamento não terminou em um portal SciELO suportado."))
   }
-
-  Sys.sleep(delay)
-  invisible(NULL)
+  pdf_url <- paste0(url_artigo, if (grepl("\\?", url_artigo)) "&" else "?", "format=pdf&lang=pt")
+  destino <- fs::path(diretorio, .safe_pdf_name(id))
+  resultado <- .baixar(pdf_url, destino, id, "aberto", referer = url_artigo)
+  if (delay > 0) Sys.sleep(delay)
+  resultado
 }

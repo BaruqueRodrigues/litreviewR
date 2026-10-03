@@ -2,21 +2,32 @@
 % Please edit documentation in R/baixa_pdf_aberto.R
 \name{baixa_pdf_aberto}
 \alias{baixa_pdf_aberto}
-\title{Baixa PDF de artigos hospedados em portais nacionais de acesso aberto (ex: SciELO)}
+\title{Baixar e validar o PDF ligado a um DOI em fonte aberta suportada}
 \usage{
-baixa_pdf_aberto(referencia, diretorio = ".", delay = 2)
+baixa_pdf_aberto(
+  referencia,
+  diretorio = ".",
+  delay = 2,
+  .get = httr::GET,
+  .baixar = .baixar_pdf_validado
+)
 }
 \arguments{
-\item{referencia}{Uma lista contendo ao menos `title`, e opcionalmente `doi` e `id`.}
+\item{referencia}{Lista contendo título e, opcionalmente, DOI e ID.}
 
-\item{diretorio}{Diretório onde o PDF será salvo. Default é `"."`.}
+\item{diretorio}{Diretório de destino.}
 
-\item{delay}{Tempo em segundos entre as requisições (para respeitar o servidor). Default: `2`.}
+\item{delay}{Pausa em segundos após a tentativa.}
+
+\item{.get}{Transporte HTTP substituível para testes.}
+
+\item{.baixar}{Função interna substituível para validar o arquivo retornado.}
 }
 \value{
-O PDF é salvo no diretório indicado. Retorna `invisible(NULL)`.
+Resultado com ID, status, caminho, fonte, URL e motivo de falha.
 }
 \description{
-A função tenta baixar automaticamente o PDF de um artigo hospedado em repositórios nacionais,
-como a SciELO. Se o DOI não estiver presente, tenta buscar por título via CrossRef.
+Nesta versão, o redirecionamento do DOI é aceito quando leva ao portal
+SciELO. A função retorna um resultado estruturado; uma falha nunca é
+representada como sucesso ou como `NULL`.
 }

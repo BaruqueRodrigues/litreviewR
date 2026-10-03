@@ -1,0 +1,21 @@
+{
+  "run_id": "run-001",
+  "schema_id": "litreview-social-sciences",
+  "revision": 1,
+  "dimension_id": "research_question",
+  "unit_type": "article",
+  "unit_id": "art-001",
+  "value": null,
+  "status": "erro_extracao",
+  "value_origin": "explicit",
+  "backend": "fixture",
+  "model": "fixture-v1",
+  "instruction_version": "1",
+  "evidence_ids": [],
+  "coverage": {
+    "status": "partial"
+  },
+  "human_review": {
+    "status": "pending"
+  }
+}

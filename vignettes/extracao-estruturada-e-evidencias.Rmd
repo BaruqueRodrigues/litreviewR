@@ -1,0 +1,134 @@
+---
+title: "Extração estruturada, agentes e evidências"
+author: "litreviewR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Extração estruturada, agentes e evidências}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(litreviewR)
+```
+
+Esta vignette explica como usar um instrumento para extrair variáveis de um
+texto e como verificar citações devolvidas. O desenho é adequado para
+orquestração por agentes: o agente pode selecionar artigos, fornecer a unidade
+e o texto, chamar funções do pacote, validar estruturas e encaminhar casos
+ambíguos para revisão. O pacote fornece adaptadores e contratos; não inclui um
+agente autônomo nem substitui protocolo de pesquisa, leitura crítica ou
+supervisão humana.
+
+## Configurar dimensões de extração
+
+Uma dimensão do esquema pode declarar escopo (`article`, `study` ou `passage`),
+tipo de valor, operação `extract` e instruções. `schema_padrao()` fornece a
+estrutura inicial e `schema_validar()` verifica consistência. Personalize os
+campos para sua pergunta substantiva; variáveis úteis em ciência política
+podem incluir país, período, unidade de análise, definição operacional,
+fonte de dados, desenho, resultados e limitações, mas a seleção cabe à equipe.
+
+## Extrair campos com um modelo compatível
+
+`extrai_dimensoes()` percorre dimensões ativas compatíveis com a unidade e
+retorna respostas, evidências e uso informado. Hoje aceita adaptadores OpenAI e
+DeepSeek Chat Completions. A chamada real usa JSON estruturado; chaves devem
+ficar em variáveis de ambiente ou em um gerenciador de segredos. Não inclua
+credenciais em esquemas, scripts compartilhados ou repositórios.
+
+```{r, eval=FALSE}
+esquema <- schema_padrao()
+# Configure uma dimensão do esquema para extract e scope = "article".
+saida <- extrai_dimensoes(
+  conteudo = texto_integral,
+  schema = esquema,
+  unidade = list(scope = "article", unit_id = "artigo_001"),
+  provider = "deepseek",
+  model = "deepseek-flash",
+  run_id = "revisao-v1-artigo-001"
+)
+saida$responses
+saida$evidences
+saida$usage
+```
+
+Para testar o formato sem chamada remota, `mock_response` aceita uma resposta
+simulada por dimensão. Isso testa o caminho de parsing/validação, não a
+qualidade de um modelo ou o serviço remoto.
+
+## Adaptadores e utilitários LLM
+
+`llm_chat()` envia um prompt a OpenAI ou DeepSeek e devolve conteúdo, modelo e
+uso. `llm_constroi_prompt_dimensao()` constrói o prompt de uma dimensão;
+`llm_parse_resposta()` interpreta o JSON de uma resposta conforme a dimensão;
+`llm_calcula_custo()` estima custo a partir de tokens e tarifa informada. As
+tarifas mudam: não trate estimativas internas como fatura do provedor.
+
+```{r, eval=FALSE}
+prompt <- llm_constroi_prompt_dimensao(esquema$dimensions[[1]], "article")
+resposta_api <- llm_chat(prompt, provider = "deepseek", mock_response = "{}")
+interpretada <- llm_parse_resposta(resposta_api$content, esquema$dimensions[[1]])
+estimativa <- llm_calcula_custo(input_tokens = 1000, output_tokens = 200, model = "deepseek-flash")
+```
+
+`llm_parse_resposta()` e `llm_calcula_custo()` também são úteis em um fluxo
+próprio, mas `extrai_dimensoes()` coordena as dimensões e acumula o uso em uma
+única chamada de alto nível.
+
+## Evidências citadas e validação
+
+`valida_evidencia_trecho()` verifica se uma citação aparece literalmente como
+substring contígua em uma passagem. `criar_evidencia()` monta um objeto F0 e,
+se receber um corpus com as passagens, pode localizar posições. `contrato_validar()`
+valida cada evidência e `valida_evidencias_resposta()` confere vínculos entre
+respostas, evidências e corpus.
+
+```{r}
+passagem <- list(passage_id = "artigo_001_p3", text = "A despesa total foi associada ao número de votos.")
+corpus <- list(passages = list(passagem))
+ev <- criar_evidencia(
+  evidence_id = "ev_001", passage_id = "artigo_001_p3",
+  quote = "A despesa total foi associada ao número de votos.", corpus = corpus
+)
+valida_evidencia_trecho(ev$quote, passagem$text)
+contrato_validar(ev, tipo = "evidence", corpus = corpus)
+```
+
+A checagem literal confirma apenas que o trecho ocorre no texto fornecido. A
+pertinência da passagem para sustentar o valor extraído exige leitura humana.
+Para citações de PDFs, preserve texto, página e identificador da passagem na
+etapa de ingestão para que a verificação seja rastreável.
+
+## Pipeline legível por pessoas e agentes
+
+Um agente pode receber um esquema JSON, selecionar dimensões por escopo,
+chamar a extração em lotes controlados, validar contratos, registrar `run_id`,
+uso e abstenções, e devolver apenas resultados aprovados por regras humanas.
+Em R, o operador exportado `%>%` pode compor transformações em pipelines
+compatíveis com magrittr:
+
+```{r, eval=FALSE}
+resultados <- artigos %>%
+  purrr::map(~ extrai_dimensoes(
+    conteudo = .x$texto,
+    schema = instrumento,
+    unidade = list(scope = "article", unit_id = .x$article_id),
+    provider = "deepseek"
+  ))
+```
+
+Defina previamente limites de custo, privacidade e retenção de dados no seu
+protocolo institucional; valide uma amostra manual antes de ampliar o lote e
+registre versões do instrumento, modelo e parâmetros.
+
+## Funções cobertas
+
+- `extrai_dimensoes()`.
+- `llm_chat()`, `llm_constroi_prompt_dimensao()`, `llm_parse_resposta()` e
+  `llm_calcula_custo()`.
+- `valida_evidencia_trecho()`, `criar_evidencia()` e
+  `valida_evidencias_resposta()`.
+- `contrato_validar()` (também apresentada na vignette de instrumentos).
+- `%>%`.

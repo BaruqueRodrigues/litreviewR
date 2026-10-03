@@ -2,31 +2,43 @@
 % Please edit documentation in R/extrai_topicos.R
 \name{extrai_topicos}
 \alias{extrai_topicos}
-\title{Extrai tópicos representativos de PDFs via LDA}
+\title{Extrai tópicos representativos via LDA}
 \usage{
 extrai_topicos(
-  pasta_pdfs,
+  pasta_pdfs = NULL,
+  dtm = NULL,
+  textos = NULL,
   k = 10,
   max_termos = 10,
   idioma = "portuguese",
+  min_freq = 1,
+  seed = 1234,
   modo = c("agrupado", "detalhado")
 )
 }
 \arguments{
-\item{pasta_pdfs}{Caminho da pasta contendo os arquivos PDF.}
+\item{pasta_pdfs}{Caminho da pasta contendo arquivos PDF (opcional se `dtm` ou `textos` informado).}
+
+\item{dtm}{Objeto `DocumentTermMatrix` pré-computado (opcional).}
+
+\item{textos}{Vetor de textos alternativo (opcional).}
 
 \item{k}{Número de tópicos a ser extraído (default = 10).}
 
 \item{max_termos}{Número de termos por tópico (default = 10).}
 
-\item{idioma}{Idioma para remoção de stopwords (ex: "portuguese", "english", "spanish").}
+\item{idioma}{Idioma para remoção de stopwords. Default = "portuguese".}
 
-\item{modo}{Modo de retorno: `"agrupado"` (padrão) ou `"detalhado"` (com beta por termo).}
+\item{min_freq}{Frequência mínima dos termos na DTM. Default = 1.}
+
+\item{seed}{Semente para reprodutibilidade (default = 1234).}
+
+\item{modo}{Modo de retorno: `"agrupado"` (padrão) ou `"detalhado"` (com probabilidade beta por termo).}
 }
 \value{
 Um tibble com tópicos e termos, agrupados ou detalhados.
 }
 \description{
-Lê PDFs de uma pasta, extrai o texto, aplica pré-processamento com stopwords no idioma desejado,
-realiza modelagem de tópicos com LDA e retorna os principais termos por tópico.
+Extrai texto, unifica o pré-processamento via `cria_dtm`, executa modelagem LDA
+com semente configurável e retorna os principais termos por tópico.
 }

@@ -1,0 +1,100 @@
+---
+title: "Referências bibliográficas e aquisição de textos"
+author: "litreviewR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Referências bibliográficas e aquisição de textos}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(litreviewR)
+```
+
+Esta vignette cobre leitura de BibTeX, identificação e normalização de DOI,
+consulta de metadados e aquisição de PDFs. A disponibilidade de serviços
+externos varia. Antes de enviar requisições, confira termos de uso, licenças e
+permissões de acesso aplicáveis aos artigos e ao seu contexto institucional.
+
+## Ler e normalizar referências
+
+`gera_referencias()` converte um arquivo BibTeX em uma lista de registros. A
+chave BibTeX é usada como identificador preferencial; o pacote também registra
+possíveis duplicatas. O exemplo cria um arquivo temporário autocontido:
+
+```{r}
+bib <- tempfile(fileext = ".bib")
+writeLines(c(
+  "@article{silva2024,",
+  "  title = {Política e instituições},",
+  "  author = {Silva, Ana},",
+  "  year = {2024},",
+  "  journal = {Revista Exemplo},",
+  "  doi = {https://doi.org/10.1234/exemplo.1},",
+  "  abstract = {Um resumo de demonstração.}",
+  "}"
+), bib)
+refs <- gera_referencias(bib)
+refs[[1]][c("article_id", "title", "year", "doi", "id_source")]
+normaliza_doi(refs[[1]]$doi)
+```
+
+`normaliza_doi()` aceita DOI puro, prefixo `doi:` ou URL DOI. Para procurar um
+DOI a partir dos metadados, `identifica_doi_referencia()` consulta Crossref e
+retorna estado, candidatos e pontuação; resultados ambíguos devem ser
+conferidos, não aceitos automaticamente. `descobre_doi_por_titulo()` oferece
+o atalho por título. `crossref_info()` consulta metadados já identificados por
+DOI. `is_referencia_nacional()` é um indicador heurístico baseado no DOI e não
+substitui validação bibliográfica.
+
+```{r, eval=FALSE}
+candidato <- identifica_doi_referencia(
+  titulo = "Política e instituições",
+  autores = "Ana Silva",
+  ano = 2024
+)
+doi <- descobre_doi_por_titulo("Política e instituições")
+metadados <- crossref_info(doi)
+is_referencia_nacional(doi)
+```
+
+As consultas dependem da rede e do serviço Crossref. Configure `CROSSREF_MAILTO`
+para identificar suas consultas, respeite limites de acesso e revise os
+candidatos antes de atualizar registros.
+
+## Baixar PDFs e conferir o resultado
+
+`baixa_pdf_auto()` tenta as fontes indicadas em `fontes` e devolve um resultado
+estruturado para cada referência. O padrão é `local`, `url`, `aberto`, `scihub`;
+no estado atual, `aberto` reconhece redirecionamentos SciELO. Um download só é
+marcado como sucesso após validação do PDF. Consulte `status`, `source`, `path`,
+`reason` e `attempts` para auditar tentativas.
+
+```{r, eval=FALSE}
+resultado <- baixa_pdf_auto(refs, diretorio = "pdfs")
+resultado[[1]][c("id", "status", "source", "path", "reason")]
+```
+
+As funções específicas `baixa_pdf_aberto()` e `baixa_pdf_scihub()` permitem
+tentar uma fonte isoladamente. Os domínios Sci-Hub são configuráveis porque
+podem mudar:
+
+```{r, eval=FALSE}
+options(litreviewR.scihub_urls = c("https://dominio-configurado-pelo-usuario"))
+resultado_aberto <- baixa_pdf_aberto(refs[[1]], diretorio = "pdfs")
+resultado_scihub <- baixa_pdf_scihub(refs[[1]], diretorio = "pdfs")
+```
+
+O Sci-Hub permanece como backend opcional a pedido do mantenedor. Seu uso pode
+ter implicações legais ou contratuais dependendo do artigo e da jurisdição;
+priorize fontes abertas e institucionais quando disponíveis e confirme que
+você tem direito de obter e processar cada arquivo. O pacote não garante que
+uma fonte externa esteja online ou que um artigo esteja disponível.
+
+## Funções cobertas
+
+- `gera_referencias()`, `normaliza_doi()`, `identifica_doi_referencia()`,
+  `descobre_doi_por_titulo()`, `crossref_info()` e `is_referencia_nacional()`.
+- `baixa_pdf_auto()`, `baixa_pdf_aberto()` e `baixa_pdf_scihub()`.

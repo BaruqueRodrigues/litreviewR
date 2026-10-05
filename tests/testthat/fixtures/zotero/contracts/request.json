@@ -1,0 +1,8 @@
+{
+  "format_version": "1.0.0",
+  "operation": "zotero_get_item",
+  "arguments": {
+    "library_profile": "local-default",
+    "item_key": "ABCD1234"
+  }
+}

@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format_version",
+    "operation",
+    "arguments"
+  ],
+  "properties": {
+    "format_version": {
+      "const": "1.0.0"
+    },
+    "operation": {
+      "enum": [
+        "zotero_status",
+        "zotero_list_collections",
+        "zotero_search_items",
+        "zotero_get_item",
+        "litreview_import_collection"
+      ]
+    },
+    "arguments": {
+      "type": "object"
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "operation": {
+          "const": "zotero_status"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "library_profile"
+          ],
+          "properties": {
+            "library_profile": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "operation": {
+          "const": "zotero_list_collections"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "library_profile"
+          ],
+          "properties": {
+            "library_profile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "cursor": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^[0-9]+$"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "operation": {
+          "const": "zotero_search_items"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "library_profile"
+          ],
+          "properties": {
+            "library_profile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "query": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "collection_key": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Z0-9]{8}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "cursor": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^[0-9]+$"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "operation": {
+          "const": "zotero_get_item"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "library_profile",
+            "item_key"
+          ],
+          "properties": {
+            "library_profile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "item_key": {
+              "type": "string",
+              "pattern": "^[A-Z0-9]{8}$"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "operation": {
+          "const": "litreview_import_collection"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "library_profile",
+            "collection_key",
+            "corpus_id"
+          ],
+          "properties": {
+            "library_profile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "collection_key": {
+              "type": "string",
+              "pattern": "^[A-Z0-9]{8}$"
+            },
+            "corpus_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "include_pdfs": {
+              "type": "boolean"
+            },
+            "dry_run": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

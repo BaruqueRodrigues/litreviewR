@@ -1,0 +1,14 @@
+{
+  "key": "PDF12345",
+  "version": 3,
+  "library": {"type": "user", "id": 123},
+  "data": {
+    "key": "PDF12345",
+    "version": 3,
+    "itemType": "attachment",
+    "parentItem": "ABCD1234",
+    "linkMode": "imported_file",
+    "contentType": "application/pdf",
+    "filename": "original.pdf"
+  }
+}

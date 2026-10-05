@@ -1,0 +1,7 @@
+.Rproj.user/
+.Rhistory
+.pytest_cache/
+__pycache__/
+*.py[cod]
+mcp/zotero/.venv/
+**/.venv/

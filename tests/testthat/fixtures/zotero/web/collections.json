@@ -1,0 +1,42 @@
+[
+  {
+    "key": "COL12345",
+    "version": 12,
+    "library": {
+      "type": "user",
+      "id": 123456,
+      "name": "Minha Biblioteca"
+    },
+    "data": {
+      "key": "COL12345",
+      "version": 12,
+      "name": "Revisão Sistemática 2026",
+      "parentCollection": false,
+      "relations": {}
+    },
+    "meta": {
+      "numCollections": 0,
+      "numItems": 15
+    }
+  },
+  {
+    "key": "COL67890",
+    "version": 14,
+    "library": {
+      "type": "user",
+      "id": 123456,
+      "name": "Minha Biblioteca"
+    },
+    "data": {
+      "key": "COL67890",
+      "version": 14,
+      "name": "Artigos em Avaliação",
+      "parentCollection": false,
+      "relations": {}
+    },
+    "meta": {
+      "numCollections": 0,
+      "numItems": 5
+    }
+  }
+]

@@ -1,0 +1,6 @@
+{
+  "key": "COLL1234",
+  "version": 9,
+  "library": {"type": "user", "id": 123},
+  "data": {"key": "COLL1234", "name": "Synthetic collection", "parentCollection": false}
+}

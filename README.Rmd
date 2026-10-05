@@ -34,6 +34,8 @@ em fluxos automatizados sem delegar decisões científicas ao modelo.
 
 - Ler referências BibTeX, normalizar e localizar DOIs, consultar metadados
   Crossref e registrar possíveis duplicatas.
+- Importar coleções e PDFs do Zotero local com IDs persistentes, proveniência
+  e manifesto, mantendo a biblioteca original intacta.
 - Preparar PDFs e textos identificados, extrair resumos para triagem e criar
   uma matriz documento-termo com registro de exclusões.
 - Explorar corpus com LDA ou STM, inspecionar termos por tópico e agrupar
@@ -115,6 +117,42 @@ analise <- roda_analise_topicos(
 analise$topicos
 analise$associacao_documento_topico
 ```
+
+## Importar uma coleção do Zotero local
+
+Habilite “Allow other applications on this computer to communicate with
+Zotero” nas preferências avançadas e mantenha o aplicativo aberto. As funções
+abaixo consultam a API local; não alteram itens nem arquivos do Zotero.
+
+```{r}
+config <- zotero_config(backend = "local", library_type = "user", library_id = "0")
+zotero_status(config)
+colecoes <- zotero_list_collections(config)
+# Substitua pela chave de oito caracteres da coleção escolhida:
+previa <- zotero_import_collection(config, "COLL1234", "corpus-zotero")
+# A simulação não grava arquivos. Para efetuar a importação:
+resultado <- zotero_import_collection(
+  config, "COLL1234", "corpus-zotero", include_pdfs = TRUE, dry_run = FALSE
+)
+```
+
+A chave de coleção do exemplo é sintética. A importação considera somente a
+coleção selecionada, registra anexos indisponíveis e preserva IDs na
+reimportação. PDFs são copiados para o corpus, sem mover os originais.
+Quando uma versão antiga do Zotero não fornece identidade da biblioteca ou
+instância, informe `instance_id` persistente na configuração. Consulte
+[contratos da integração](docs/zotero-contracts.md) para detalhes de identidade,
+limites e layout do corpus.
+
+O backend Web reutiliza o mesmo transporte HTTP, os limites e os erros tipados
+do cliente local. A chave Web é lida pela variável indicada em
+`api_key_env`; ela não fica no objeto de configuração. O servidor MCP expõe
+cinco ferramentas por `stdio` e aceita apenas IDs de perfis de biblioteca e
+corpus configurados pelo operador. Veja a [vignette Zotero](vignettes/zotero.Rmd)
+e o [contrato 1.0.0](docs/zotero-contracts.md). O fluxo automatizado usa
+fixtures sintéticas; o piloto com uma biblioteca real continua pendente.
+Para executar o servidor MCP, use o checkout do repositório: instalar apenas
+o pacote R não instala os arquivos Python na biblioteca R.
 
 ## Instrumentos próprios para sua revisão
 

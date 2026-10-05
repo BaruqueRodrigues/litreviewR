@@ -1,0 +1,7 @@
+{
+  "backend": "local",
+  "library_type": "user",
+  "library_id": "123",
+  "server_id": "synthetic-instance",
+  "instance_id": null
+}

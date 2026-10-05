@@ -1,0 +1,6 @@
+{
+  "key": "NOTE1234",
+  "version": 2,
+  "library": {"type": "user", "id": 123},
+  "data": {"key": "NOTE1234", "itemType": "note", "note": "Synthetic note"}
+}

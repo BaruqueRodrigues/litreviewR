@@ -1,0 +1,6 @@
+{
+  "key": "CHILD234",
+  "version": 4,
+  "library": {"type": "user", "id": 123},
+  "data": {"key": "CHILD234", "itemType": "note", "note": "Synthetic child"}
+}

@@ -5,3 +5,13 @@
 ^AVALIACAO_E_PLANO_2026\.md$
 ^PLANO_DE_ACAO_SUBAGENTES\.md$
 ^pilot-data$
+^docs/zotero-handoff-1\.0\.0\.zip$
+^docs/zotero-core-r-1\.0\.0\.zip$
+^\.pytest_cache$
+^mcp/zotero/\.pytest_cache$
+^mcp/zotero/\.venv$
+^mcp/zotero/__pycache__$
+^mcp/zotero/tests/__pycache__$
+^mcp/zotero/.*\.py[cod]$
+^workspaces$
+^entregas$

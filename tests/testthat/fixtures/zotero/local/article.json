@@ -1,0 +1,6 @@
+{
+  "key": "ABCD1234",
+  "version": 7,
+  "library": {"type": "user", "id": 123},
+  "data": {"key": "ABCD1234", "itemType": "journalArticle", "title": "Synthetic study"}
+}

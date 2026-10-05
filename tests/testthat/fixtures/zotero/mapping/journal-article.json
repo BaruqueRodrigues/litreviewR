@@ -1,0 +1,22 @@
+{
+  "key": "ABCD1234",
+  "version": 7,
+  "library": {"type": "user", "id": 123},
+  "data": {
+    "key": "ABCD1234",
+    "version": 7,
+    "itemType": "journalArticle",
+    "title": "Pesquisa sintética",
+    "creators": [
+      {"creatorType": "author", "name": "Instituto Exemplo"},
+      {"creatorType": "author", "firstName": "Ana", "lastName": "Silva"}
+    ],
+    "date": "2024-05",
+    "DOI": "https://doi.org/10.1000/example",
+    "publicationTitle": "Revista Sintética",
+    "abstractNote": "Resumo de teste.",
+    "url": "https://example.org/article",
+    "tags": [{"tag": "piloto"}, {"tag": "revisao"}],
+    "collections": ["COLL1234"]
+  }
+}

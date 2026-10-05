@@ -1,0 +1,71 @@
+[
+  {
+    "key": "ITEM0001",
+    "version": 42,
+    "library": {
+      "type": "user",
+      "id": 123456
+    },
+    "data": {
+      "key": "ITEM0001",
+      "version": 42,
+      "itemType": "journalArticle",
+      "title": "Machine Learning em Ciências Sociais Aplicadas",
+      "creators": [
+        {
+          "creatorType": "author",
+          "firstName": "Carlos",
+          "lastName": "Silva"
+        },
+        {
+          "creatorType": "author",
+          "name": "Ministério da Saúde"
+        }
+      ],
+      "publicationTitle": "Revista Brasileira de Pesquisa",
+      "volume": "10",
+      "issue": "2",
+      "pages": "101-120",
+      "date": "2024-05-10",
+      "DOI": "10.1000/182",
+      "abstractNote": "Estudo sobre a aplicação de algoritmos em políticas públicas.",
+      "tags": [
+        {"tag": "metodologia"},
+        {"tag": "inteligencia artificial"}
+      ],
+      "collections": ["COL12345"],
+      "relations": {}
+    },
+    "meta": {
+      "numChildren": 1
+    }
+  },
+  {
+    "key": "ITEM0002",
+    "version": 43,
+    "library": {
+      "type": "user",
+      "id": 123456
+    },
+    "data": {
+      "key": "ITEM0002",
+      "version": 43,
+      "itemType": "book",
+      "title": "Metodologia Científica e Revisões de Literatura",
+      "creators": [
+        {
+          "creatorType": "author",
+          "firstName": "Ana",
+          "lastName": "Pereira"
+        }
+      ],
+      "date": "2023",
+      "abstractNote": "Guia prático para elaboração de revisões sistemáticas.",
+      "collections": ["COL12345"],
+      "relations": {}
+    },
+    "meta": {
+      "numChildren": 0
+    }
+  }
+]

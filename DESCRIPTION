@@ -17,6 +17,7 @@ LazyData: true
 RoxygenNote: 7.3.3
 Imports: 
     cli,
+    digest,
     dplyr,
     fs,
     httr,
@@ -41,6 +42,7 @@ Suggests:
     rmarkdown,
     shiny,
     text2vec,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    withr
 Config/testthat/edition: 3
 VignetteBuilder: knitr

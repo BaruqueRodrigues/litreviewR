@@ -1,0 +1,47 @@
+{
+  "format_version": "1.0.0",
+  "ok": true,
+  "data": {
+    "item": {
+      "key": "ABCD1234",
+      "version": 7,
+      "library": {
+        "type": "user",
+        "id": 123
+      },
+      "data": {
+        "key": "ABCD1234",
+        "version": 7,
+        "itemType": "journalArticle",
+        "title": "Pesquisa sintética",
+        "creators": [
+          {
+            "creatorType": "author",
+            "name": "Instituto Exemplo"
+          }
+        ],
+        "date": "2024-05",
+        "DOI": "https://doi.org/10.1000/example",
+        "abstractNote": "Resumo sintético",
+        "tags": [
+          {
+            "tag": "piloto"
+          }
+        ],
+        "collections": [
+          "COLL1234"
+        ]
+      }
+    },
+    "children": [],
+    "context": {
+      "backend": "local",
+      "library_type": "user",
+      "library_id": "123",
+      "server_id": "synthetic-instance",
+      "instance_id": null
+    }
+  },
+  "error": null,
+  "warnings": []
+}

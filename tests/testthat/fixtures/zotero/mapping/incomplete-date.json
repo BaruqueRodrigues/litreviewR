@@ -1,0 +1,16 @@
+{
+  "key": "EFGH5678",
+  "version": 3,
+  "library": {"type": "user", "id": 0},
+  "data": {
+    "key": "EFGH5678",
+    "version": 3,
+    "itemType": "conferencePaper",
+    "title": "Datas ambíguas",
+    "creators": [{"creatorType": "author", "name": "Centro de Pesquisa"}],
+    "date": "2020/2021",
+    "DOI": "",
+    "tags": [],
+    "collections": []
+  }
+}

@@ -1,0 +1,125 @@
+---
+title: "Zotero no litreviewR e no MCP"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Zotero no litreviewR e no MCP}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+~~~{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+~~~
+
+Os exemplos desta vignette são ilustrativos e não rodam durante a construção do
+pacote. O fluxo de teste automatizado usa fixtures locais; nenhum exemplo
+precisa de uma conta Zotero ou acesso externo.
+
+## Uso direto em R
+
+A integração suporta Zotero Desktop local e Zotero Web API v3. As chamadas são
+somente leitura da biblioteca. A importação escreve arquivos apenas no diretório
+de corpus escolhido, começa em dry_run = TRUE e copia PDFs sem alterar o
+original.
+
+~~~{r}
+library(litreviewR)
+
+# Local: mantenha Zotero aberto e a API local habilitada.
+local_cfg <- zotero_config(
+  backend = "local",
+  library_type = "user",
+  library_id = "0",
+  instance_id = "desktop-pessoal"
+)
+zotero_status(local_cfg)
+colecoes <- zotero_list_collections(local_cfg, limit = 50L)
+itens <- zotero_search_items(local_cfg, query = "revisão", limit = 20L)
+item <- zotero_get_item(local_cfg, "ABCD1234")
+
+# Web: a configuração guarda o nome da variável, nunca o segredo.
+web_cfg <- zotero_config(
+  backend = "web",
+  library_type = "user",
+  library_id = Sys.getenv("ZOTERO_USER_ID"),
+  api_key_env = "ZOTERO_API_KEY"
+)
+zotero_status(web_cfg)
+~~~
+
+zotero_config() aceita bibliotecas pessoais ou de grupo. Para Web, defina
+ZOTERO_API_KEY no ambiente do processo R. O cliente usa o transporte HTTP
+comum, valida a URL oficial, limita respostas, desativa redirecionamentos e
+mapeia respostas HTTP para erros tipados. Paginação usa cursor decimal e
+limit de 1 a 100.
+
+A normalização mantém a chave e a versão Zotero na proveniência, preserva
+criadores institucionais e não inventa DOI ou ano. Itens de nota e anexos não
+viram artigos.
+
+## Importação de coleção e PDFs
+
+~~~{r}
+simulacao <- zotero_import_collection(
+  local_cfg,
+  collection_key = "COLL1234",
+  corpus_dir = "corpus/revisao",
+  include_pdfs = TRUE
+)
+# Revise a simulação antes de efetivar:
+resultado <- zotero_import_collection(
+  local_cfg,
+  collection_key = "COLL1234",
+  corpus_dir = "corpus/revisao",
+  include_pdfs = TRUE,
+  dry_run = FALSE
+)
+~~~
+
+A chave COLL1234 é sintética. A importação registra metadados e manifesto,
+copia PDFs válidos para pdfs/, calcula SHA-256 e mantém os arquivos de origem
+intactos. Reimportações sem alterações preservam IDs e documentos. O contrato
+em docs/zotero-contracts.md descreve limites, caminhos, manifesto e erros.
+
+## Servidor MCP local por stdio
+
+Instale as dependências Python fixadas em mcp/zotero/requirements.txt e deixe
+Rscript disponível no PATH. Configure os perfis no ambiente que inicia o
+servidor; a ferramenta recebe somente seus identificadores:
+
+~~~sh
+export LITREVIEW_ZOTERO_PROFILES_JSON='{"desktop":{"backend":"local","library_type":"user","library_id":"0","instance_id":"desktop-pessoal"},"web":{"backend":"web","library_type":"user","library_id":"123456","api_key_env":"ZOTERO_API_KEY"}}'
+export LITREVIEW_ZOTERO_CORPORA_JSON='{"revisao":"/caminho/absoluto/corpus-revisao"}'
+# Disponibilize ZOTERO_API_KEY ao processo por um gerenciador de segredos.
+~~~
+
+Cada perfil define backend, library_type, library_id e, opcionalmente,
+base_url, api_key_env, instance_id, timeout e limites. O servidor valida
+o perfil em allowlist; ele nunca aceita do cliente uma URL, chave ou caminho de
+corpus. corpus_id também é um nome previamente mapeado para um diretório
+absoluto autorizado.
+
+Inicie o servidor no checkout do pacote:
+
+O comando `install_github()` instala o pacote R, mas não coloca o servidor
+Python no diretório de bibliotecas R. Clone ou baixe o checkout do repositório
+para iniciar o MCP; o processo Rscript usa o código R desse checkout.
+
+~~~sh
+cd /caminho/para/litreviewR/mcp/zotero
+/path/para/python -m venv .venv
+.venv/bin/pip install -r requirements.txt
+.venv/bin/python -m server
+~~~
+
+O processo fala MCP pela stdio; logs permanecem em stderr. As cinco
+ferramentas são zotero_status, zotero_list_collections,
+zotero_search_items, zotero_get_item e litreview_import_collection.
+Todas as ferramentas de leitura exigem library_profile; a importação exige
+também corpus_id e começa com dry_run = TRUE.
+
+Os testes automatizados iniciam um cliente MCP real e atravessam servidor,
+ponte Rscript e funções do pacote usando respostas JSON sintéticas e um PDF
+temporário. O backend Web também é testado pelo transporte substituível, sem
+conta ou rede. Um piloto com Zotero Desktop ou Web real continua optativo e
+precisa de biblioteca e coleção escolhidas pelo operador.

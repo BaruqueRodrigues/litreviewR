@@ -1,0 +1,6 @@
+{
+  "key": "ATTACH12",
+  "version": 3,
+  "library": {"type": "user", "id": 123},
+  "data": {"key": "ATTACH12", "itemType": "attachment", "filename": "synthetic.pdf"}
+}

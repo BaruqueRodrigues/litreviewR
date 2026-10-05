@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format_version",
+    "ok",
+    "data",
+    "error",
+    "warnings"
+  ],
+  "properties": {
+    "format_version": {
+      "const": "1.0.0"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "data": {},
+    "error": {},
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "data": {
+          "type": "object"
+        },
+        "error": {
+          "type": "null"
+        }
+      }
+    },
+    {
+      "properties": {
+        "ok": {
+          "const": false
+        },
+        "data": {
+          "type": "null"
+        },
+        "error": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "code",
+            "message",
+            "retryable",
+            "details"
+          ],
+          "properties": {
+            "code": {
+              "enum": [
+                "INVALID_CONFIG",
+                "INVALID_ARGUMENT",
+                "CONNECTION_UNAVAILABLE",
+                "ACCESS_DENIED",
+                "NOT_FOUND",
+                "RATE_LIMITED",
+                "INVALID_RESPONSE",
+                "ATTACHMENT_UNAVAILABLE",
+                "VERSION_CONFLICT",
+                "WRITE_FAILED",
+                "CORPUS_LOCKED",
+                "LIMIT_EXCEEDED",
+                "IDENTITY_UNRESOLVED",
+                "BACKEND_UNAVAILABLE"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1
+            },
+            "retryable": {
+              "type": "boolean"
+            },
+            "details": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}
